@@ -1,0 +1,185 @@
+server:
+  port: 9528
+  session-timeout: 5184000 #session����ʱ��Ϊ2����(60��)
+
+mybatis:
+  config-location: classpath:mybatis/mybatis.cfg.xml        # mybatis�����ļ�����·��
+  type-aliases-package: com.entities    # ����Entity���������ڰ�
+  mapper-locations: classpath:mybatis/mapper/**/*.xml  # mapperӳ���ļ�
+
+spring:
+  profiles:
+    active: dev
+  thymeleaf:
+    mode: LEGACYHTML5
+    cache: false
+    jackson:
+      time-zone: GMT+8
+      date-format: yyyy-MM-dd HH:mm:ss
+  #  servlet:
+  #    multipart:
+  #      max-file-size: 50Mb
+  #      max-request-size: 50Mb
+  http:
+    multipart:
+      maxFileSize: 50MB
+      maxRequestSize: 50MB
+
+    devtools:
+      restart:
+        enabled: true
+  cache:
+    type: redis
+    ehcache:
+      config: classpath:config/ehcache.xml
+dfs:
+  prefix: https://nm.soholy.cn/pic/
+  confs:
+  - 120.78.137.116:22122
+
+---
+
+############################################################# �������� ################################################
+
+spring:
+  application:
+    name: tob-zuul-shiro
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource            # ��ǰ����Դ��������
+    driver-class-name: org.gjt.mm.mysql.Driver              # mysql������
+    url: jdbc:mysql://192.168.0.69:3308/tob-shopping-mall?useUnicode=true&characterEncoding=utf8              # ���ݿ�����
+    username: root
+    password: 123456
+    dbcp2:
+      min-idle: 5                                           # ���ݿ����ӳص���Сά��������
+      initial-size: 5                                       # ��ʼ��������
+      max-total: 5                                          # ���������
+      max-wait-millis: 200                                 # �ȴ����ӻ�ȡ�����ʱʱ��
+  profiles: dev
+  aop:
+    proxy-target-class: true
+  redis:
+    host: 192.168.0.69
+    port: 6380
+    password:
+    timeout: 10000
+    pool:
+      max-active: 100
+      min-idle: 10
+      max-idle: 8
+      max-wait: -1
+  http:
+    multipart:
+      max-file-size: 20mb
+      max-request-size: 20mb
+
+eureka:
+  client: #�ͻ���ע���eureka�����б���
+    service-url:
+      defaultZone: http://192.168.0.69:7001/eureka/,http://192.168.0.69:7002/eureka/,http://192.168.0.69:7003/eureka/
+#      defaultZone: http://192.168.0.14:7001/eureka/
+  instance:
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}/${spring.application.instance_id:${spring.application.name}}   #�Զ������������Ϣ
+    prefer-ip-address: true     #����·��������ʾIP��ַ
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 500000
+
+ribbon:
+  ConnectTimeout: 500000
+  ReadTimeout: 500000
+
+zuul:
+  #  ignored-services: "*"
+  prefix: /biz
+  routes:
+    tob-budget:
+      path: /tob-budget/**
+      url: http://localhost:9002
+    tob-user:
+      path: /tob-user/**
+      url: http://localhost:9003
+    tob-mall:
+      path: /tob-mall/**
+      url: http://localhost:9006
+    tob-goods:
+      path: /tob-goods/**
+      url: http://localhost:9005
+    tob-order:
+      path: /tob-order/**
+      url: http://localhost:9001
+    tob-shopping-cart:
+      path: /tob-shopping-cart/**
+      url: http://localhost:9007
+    tob-supplier:
+      path: /tob-supplier/**
+      url: http://localhost:9004
+    tob-picture:
+      path: /tob-picture/**
+      url: http://localhost:9008
+  host:
+    max-total-connections: 500000
+
+
+# ��ҳ����
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+server:
+  port: 9528
+---
+############################################################# ������������ ################################################
+
+spring:
+  application:
+  name: nm
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource            # ��ǰ����Դ��������
+    driver-class-name: org.gjt.mm.mysql.Driver              # mysql������
+    url: jdbc:mysql://120.78.137.116:3306/tob-shopping-mall?useUnicode=true&characterEncoding=utf8              # ���ݿ�����
+    username: nm_0820
+    password: Shl@0820
+    dbcp2:
+      min-idle: 5                                           # ���ݿ����ӳص���Сά��������
+      initial-size: 5                                       # ��ʼ��������
+      max-total: 5                                          # ���������
+      max-wait-millis: 200                                  # �ȴ����ӻ�ȡ�����ʱʱ��
+  profiles: pro
+  aop:
+    proxy-target-class: true
+  redis:
+    host: localhost
+    port: 6379
+    password:
+    timeout: 10000
+    database: 11
+    pool:
+      max-active: 100
+      min-idle: 10
+      max-idle: 8
+      max-wait: -1
+
+
+
+#eureka:
+#  client: #�ͻ���ע���eureka�����б���
+#    service-url:
+#      defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
+#  instance:
+#    instance-id: ${spring.cloud.client.ipAddress}:${server.port}/${spring.application.instance_id:${spring.application.name}}  #�Զ������������Ϣ
+#    prefer-ip-address: true     #����·��������ʾIP��ַ
+
+
+# ��ҳ����
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql

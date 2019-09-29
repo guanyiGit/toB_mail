@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.SkuDao">
+
+	<select id="get" resultType="com.entities.SkuDO">
+		select `sku_id`,`goods_id`,`sku_num`,`sku_name`,`price`,`stock`,`status`,`create_time`,`update_time` from sku where sku_id = #{value}
+	</select>
+
+	<select id="list" resultType="com.entities.SkuDO">
+		select `sku_id`,`goods_id`,`sku_num`,`sku_name`,`price`,`stock`,`status`,`create_time`,`update_time` from sku
+        <where>  
+		  		  <if test="skuId != null and skuId != ''"> and sku_id = #{skuId} </if>
+		  		  <if test="goodsId != null and goodsId != ''"> and goods_id = #{goodsId} </if>
+		  		  <if test="skuNum != null and skuNum != ''"> and sku_num = #{skuNum} </if>
+		  		  <if test="skuName != null and skuName != ''"> and sku_name = #{skuName} </if>
+		  		  <if test="price != null and price != ''"> and price = #{price} </if>
+		  		  <if test="stock != null and stock != ''"> and stock = #{stock} </if>
+		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
+		  		  <if test="updateTime != null and updateTime != ''"> and update_time = #{updateTime} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by sku_id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from sku
+		 <where>  
+		  		  <if test="skuId != null and skuId != ''"> and sku_id = #{skuId} </if>
+		  		  <if test="goodsId != null and goodsId != ''"> and goods_id = #{goodsId} </if>
+		  		  <if test="skuNum != null and skuNum != ''"> and sku_num = #{skuNum} </if>
+		  		  <if test="skuName != null and skuName != ''"> and sku_name = #{skuName} </if>
+		  		  <if test="price != null and price != ''"> and price = #{price} </if>
+		  		  <if test="stock != null and stock != ''"> and stock = #{stock} </if>
+		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
+		  		  <if test="updateTime != null and updateTime != ''"> and update_time = #{updateTime} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.entities.SkuDO" useGeneratedKeys="true" keyProperty="skuId">
+		insert into sku
+		(
+			`goods_id`, 
+			`sku_num`, 
+			`sku_name`, 
+			`price`, 
+			`stock`, 
+			`status`, 
+			`create_time`, 
+			`update_time`
+		)
+		values
+		(
+			#{goodsId}, 
+			#{skuNum}, 
+			#{skuName}, 
+			#{price}, 
+			#{stock}, 
+			#{status}, 
+			#{createTime}, 
+			#{updateTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.entities.SkuDO">
+		update sku 
+		<set>
+			<if test="goodsId != null">`goods_id` = #{goodsId}, </if>
+			<if test="skuNum != null">`sku_num` = #{skuNum}, </if>
+			<if test="skuName != null">`sku_name` = #{skuName}, </if>
+			<if test="price != null">`price` = #{price}, </if>
+			<if test="stock != null">`stock` = #{stock}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where sku_id = #{skuId}
+	</update>
+	
+	<delete id="remove">
+		delete from sku where sku_id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from sku where sku_id in 
+		<foreach item="skuId" collection="array" open="(" separator="," close=")">
+			#{skuId}
+		</foreach>
+	</delete>
+
+</mapper>

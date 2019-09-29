@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.SupplierDao">
+
+	<select id="get" resultType="com.entities.SupplierDO">
+		select `sup_id`,`sup_name`,`description`,`status`,`org_id`,`sc_id`,`address`,`legal_person`,`phone`,`linkman`,`email`,`social_credit_code`,`registered_assets`,`floor_area`,`date_establishment`,`business_volume`,`bank_credit_status`,`human_resource_situation`,`status_equipment`,`business_scope`,`product_serve`,`articles_agreement`,`create_time`,`update_time` from supplier where sup_id = #{value}
+	</select>
+
+	<select id="list" resultType="com.entities.SupplierDO">
+		select `sup_id`,`sup_name`,`description`,`status`,`org_id`,`sc_id`,`address`,`legal_person`,`phone`,`linkman`,`email`,`social_credit_code`,`registered_assets`,`floor_area`,`date_establishment`,`business_volume`,`bank_credit_status`,`human_resource_situation`,`status_equipment`,`business_scope`,`product_serve`,`articles_agreement`,`create_time`,`update_time` from supplier
+        <where>  
+		  		  <if test="supId != null and supId != ''"> and sup_id = #{supId} </if>
+		  		  <if test="supName != null and supName != ''"> and sup_name = #{supName} </if>
+		  		  <if test="description != null and description != ''"> and description = #{description} </if>
+		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="orgId != null and orgId != ''"> and org_id = #{orgId} </if>
+		  		  <if test="scId != null and scId != ''"> and sc_id = #{scId} </if>
+		  		  <if test="address != null and address != ''"> and address = #{address} </if>
+		  		  <if test="legalPerson != null and legalPerson != ''"> and legal_person = #{legalPerson} </if>
+		  		  <if test="phone != null and phone != ''"> and phone = #{phone} </if>
+		  		  <if test="linkman != null and linkman != ''"> and linkman = #{linkman} </if>
+		  		  <if test="email != null and email != ''"> and email = #{email} </if>
+		  		  <if test="socialCreditCode != null and socialCreditCode != ''"> and social_credit_code = #{socialCreditCode} </if>
+		  		  <if test="registeredAssets != null and registeredAssets != ''"> and registered_assets = #{registeredAssets} </if>
+		  		  <if test="floorArea != null and floorArea != ''"> and floor_area = #{floorArea} </if>
+		  		  <if test="dateEstablishment != null and dateEstablishment != ''"> and date_establishment = #{dateEstablishment} </if>
+		  		  <if test="businessVolume != null and businessVolume != ''"> and business_volume = #{businessVolume} </if>
+		  		  <if test="bankCreditStatus != null and bankCreditStatus != ''"> and bank_credit_status = #{bankCreditStatus} </if>
+		  		  <if test="humanResourceSituation != null and humanResourceSituation != ''"> and human_resource_situation = #{humanResourceSituation} </if>
+		  		  <if test="statusEquipment != null and statusEquipment != ''"> and status_equipment = #{statusEquipment} </if>
+		  		  <if test="businessScope != null and businessScope != ''"> and business_scope = #{businessScope} </if>
+		  		  <if test="productServe != null and productServe != ''"> and product_serve = #{productServe} </if>
+		  		  <if test="articlesAgreement != null and articlesAgreement != ''"> and articles_agreement = #{articlesAgreement} </if>
+		  		  <if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
+		  		  <if test="updateTime != null and updateTime != ''"> and update_time = #{updateTime} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by sup_id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from supplier
+		 <where>  
+		  		  <if test="supId != null and supId != ''"> and sup_id = #{supId} </if>
+		  		  <if test="supName != null and supName != ''"> and sup_name = #{supName} </if>
+		  		  <if test="description != null and description != ''"> and description = #{description} </if>
+		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="orgId != null and orgId != ''"> and org_id = #{orgId} </if>
+		  		  <if test="scId != null and scId != ''"> and sc_id = #{scId} </if>
+		  		  <if test="address != null and address != ''"> and address = #{address} </if>
+		  		  <if test="legalPerson != null and legalPerson != ''"> and legal_person = #{legalPerson} </if>
+		  		  <if test="phone != null and phone != ''"> and phone = #{phone} </if>
+		  		  <if test="linkman != null and linkman != ''"> and linkman = #{linkman} </if>
+		  		  <if test="email != null and email != ''"> and email = #{email} </if>
+		  		  <if test="socialCreditCode != null and socialCreditCode != ''"> and social_credit_code = #{socialCreditCode} </if>
+		  		  <if test="registeredAssets != null and registeredAssets != ''"> and registered_assets = #{registeredAssets} </if>
+		  		  <if test="floorArea != null and floorArea != ''"> and floor_area = #{floorArea} </if>
+		  		  <if test="dateEstablishment != null and dateEstablishment != ''"> and date_establishment = #{dateEstablishment} </if>
+		  		  <if test="businessVolume != null and businessVolume != ''"> and business_volume = #{businessVolume} </if>
+		  		  <if test="bankCreditStatus != null and bankCreditStatus != ''"> and bank_credit_status = #{bankCreditStatus} </if>
+		  		  <if test="humanResourceSituation != null and humanResourceSituation != ''"> and human_resource_situation = #{humanResourceSituation} </if>
+		  		  <if test="statusEquipment != null and statusEquipment != ''"> and status_equipment = #{statusEquipment} </if>
+		  		  <if test="businessScope != null and businessScope != ''"> and business_scope = #{businessScope} </if>
+		  		  <if test="productServe != null and productServe != ''"> and product_serve = #{productServe} </if>
+		  		  <if test="articlesAgreement != null and articlesAgreement != ''"> and articles_agreement = #{articlesAgreement} </if>
+		  		  <if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
+		  		  <if test="updateTime != null and updateTime != ''"> and update_time = #{updateTime} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.entities.SupplierDO" useGeneratedKeys="true" keyProperty="supId">
+		insert into supplier
+		(
+			`sup_name`, 
+			`description`, 
+			`status`, 
+			`org_id`, 
+			`sc_id`, 
+			`address`, 
+			`legal_person`, 
+			`phone`, 
+			`linkman`, 
+			`email`, 
+			`social_credit_code`, 
+			`registered_assets`, 
+			`floor_area`, 
+			`date_establishment`, 
+			`business_volume`, 
+			`bank_credit_status`, 
+			`human_resource_situation`, 
+			`status_equipment`, 
+			`business_scope`, 
+			`product_serve`, 
+			`articles_agreement`, 
+			`create_time`, 
+			`update_time`
+		)
+		values
+		(
+			#{supName}, 
+			#{description}, 
+			#{status}, 
+			#{orgId}, 
+			#{scId}, 
+			#{address}, 
+			#{legalPerson}, 
+			#{phone}, 
+			#{linkman}, 
+			#{email}, 
+			#{socialCreditCode}, 
+			#{registeredAssets}, 
+			#{floorArea}, 
+			#{dateEstablishment}, 
+			#{businessVolume}, 
+			#{bankCreditStatus}, 
+			#{humanResourceSituation}, 
+			#{statusEquipment}, 
+			#{businessScope}, 
+			#{productServe}, 
+			#{articlesAgreement}, 
+			#{createTime}, 
+			#{updateTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.entities.SupplierDO">
+		update supplier 
+		<set>
+			<if test="supName != null">`sup_name` = #{supName}, </if>
+			<if test="description != null">`description` = #{description}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="orgId != null">`org_id` = #{orgId}, </if>
+			<if test="scId != null">`sc_id` = #{scId}, </if>
+			<if test="address != null">`address` = #{address}, </if>
+			<if test="legalPerson != null">`legal_person` = #{legalPerson}, </if>
+			<if test="phone != null">`phone` = #{phone}, </if>
+			<if test="linkman != null">`linkman` = #{linkman}, </if>
+			<if test="email != null">`email` = #{email}, </if>
+			<if test="socialCreditCode != null">`social_credit_code` = #{socialCreditCode}, </if>
+			<if test="registeredAssets != null">`registered_assets` = #{registeredAssets}, </if>
+			<if test="floorArea != null">`floor_area` = #{floorArea}, </if>
+			<if test="dateEstablishment != null">`date_establishment` = #{dateEstablishment}, </if>
+			<if test="businessVolume != null">`business_volume` = #{businessVolume}, </if>
+			<if test="bankCreditStatus != null">`bank_credit_status` = #{bankCreditStatus}, </if>
+			<if test="humanResourceSituation != null">`human_resource_situation` = #{humanResourceSituation}, </if>
+			<if test="statusEquipment != null">`status_equipment` = #{statusEquipment}, </if>
+			<if test="businessScope != null">`business_scope` = #{businessScope}, </if>
+			<if test="productServe != null">`product_serve` = #{productServe}, </if>
+			<if test="articlesAgreement != null">`articles_agreement` = #{articlesAgreement}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where sup_id = #{supId}
+	</update>
+	
+	<delete id="remove">
+		delete from supplier where sup_id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from supplier where sup_id in 
+		<foreach item="supId" collection="array" open="(" separator="," close=")">
+			#{supId}
+		</foreach>
+	</delete>
+	<!--********************************************************************************************************-->
+	<!--********************************************************************************************************-->
+	<!--********************************************************************************************************-->
+	<!--得到新增数据后的id-->
+	<select id="getId" resultType="int">
+		SELECT LAST_INSERT_ID();
+	</select>
+	<!--查询所有供应商总条数-->
+	<select id="getSupplierListCount" resultType="int" parameterType="Map">
+		select count(0)from supplier
+		LEFT JOIN supplier_category sc ON supplier.sc_id=sc.sc_id
+		INNER JOIN t_org_info o on o.id=supplier.org_id
+		<if test="userId!=null and userId!=''">
+			and o.create_by=#{userId}
+		</if>
+		where 1=1
+		<if test="input!=null and input!=''">
+			and supplier.sup_name LIKE "%"#{input}"%"
+		</if>
+	</select>
+	<!--查询所有供应商-->
+	<select id="getSupplierList" resultType="Map" parameterType="Map">
+		select `sup_id`,`sup_name`,supplier.org_id,`address`,`legal_person`,`phone`
+			,`linkman`,`email`,`social_credit_code`,`registered_assets`
+			,`floor_area`,`date_establishment`,`business_volume`,`bank_credit_status`,`human_resource_situation`
+			,`status_equipment`,`business_scope`,`product_serve`,`articles_agreement`,supplier.create_time
+			,sc.sc_id,sc.sc_name
+		from supplier
+			LEFT JOIN supplier_category sc ON supplier.sc_id=sc.sc_id
+		INNER JOIN t_org_info o on o.id=supplier.org_id
+		<if test="userId!=null and userId!=''">
+			and o.create_by=#{userId}
+		</if>
+			where 1=1
+			<if test="input!=null and input!=''">
+				and supplier.sup_name LIKE "%"#{input}"%"
+			</if>
+			ORDER BY supplier.create_time desc
+			<if test="start!=null and size!=null">
+				limit #{start},#{size}
+			</if>
+	</select>
+	<!--根据id得到供应商对象-->
+	<select id="getSupplierById" resultType="Map">
+		select `sup_id`,`sup_name`,`address`,`legal_person`,`phone`
+			,`linkman`,`email`,`social_credit_code`,`registered_assets`
+			,`floor_area`,`date_establishment`,`business_volume`,`bank_credit_status`,`human_resource_situation`
+			,`status_equipment`,`business_scope`,`product_serve`,`articles_agreement`,supplier.create_time
+			,sc.sc_id,sc.sc_name
+		from supplier
+			LEFT JOIN supplier_category sc ON supplier.sc_id=sc.sc_id
+			where 1=1
+			<if test="id!=null">
+				and supplier.org_id=#{id}
+			</if>
+		limit 0,1
+	</select>
+	<!--删除供应商-->
+	<delete id="delSupplier">
+		delete from supplier where supplier.sup_id=#{id}
+	</delete>
+	<!--添加供应商-->
+	<insert id="addSupplier" parameterType="Map" useGeneratedKeys="true" keyProperty="supId">
+		insert into supplier
+		(`sup_name`,`description`,`status`,`org_id`,`sc_id`,
+			`address`,`legal_person`,`phone`,`linkman`,`email`,
+			`social_credit_code`,`registered_assets`,`floor_area`,`date_establishment`,`business_volume`,
+			`bank_credit_status`,`human_resource_situation`,`status_equipment`,`business_scope`,`product_serve`
+			,`articles_agreement`,`create_time`,`update_time`)
+		values
+		(#{sup_name},#{description},#{status},#{org_id},#{sc_id},
+			#{address},#{legal_person},#{phone},#{linkman},#{email},
+			#{social_credit_code},#{registered_assets},#{floor_area},now(),#{business_volume},
+			#{bank_credit_status},#{human_resource_situation},#{status_equipment},#{business_scope},#{product_serve},
+			#{articles_agreement},now(),now())
+	</insert>
+	<!--修改供应商-->
+	<update id="updSupplier" parameterType="map">
+		update supplier
+		<set>
+			<if test="sup_name != null">`sup_name` = #{sup_name}, </if>
+			<if test="description != null">`description` = #{description}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="org_id != null">`org_id` = #{org_id}, </if>
+			<if test="sc_id != null">`sc_id` = #{sc_id}, </if>
+			<if test="address != null">`address` = #{address}, </if>
+			<if test="legal_person != null">`legal_person` = #{legal_person}, </if>
+			<if test="phone != null">`phone` = #{phone}, </if>
+			<if test="linkman != null">`linkman` = #{linkman}, </if>
+			<if test="email != null">`email` = #{email}, </if>
+			<if test="social_credit_code != null">`social_credit_code` = #{social_credit_code}, </if>
+			<if test="registered_assets != null">`registered_assets` = #{registered_assets}, </if>
+			<if test="floor_area != null">`floor_area` = #{floor_area}, </if>
+			<if test="date_establishment != null">`date_establishment` = #{date_establishment}, </if>
+			<if test="business_volume != null">`business_volume` = #{business_volume}, </if>
+			<if test="bank_credit_status != null">`bank_credit_status` = #{bank_credit_status}, </if>
+			<if test="human_resource_situation != null">`human_resource_situation` = #{human_resource_situation}, </if>
+			<if test="status_equipment != null">`status_equipment` = #{status_equipment}, </if>
+			<if test="business_scope != null">`business_scope` = #{business_scope}, </if>
+			<if test="product_serve != null">`product_serve` = #{product_serve}, </if>
+			<if test="articles_agreement != null">`articles_agreement` = #{articles_agreement} </if>
+		</set>
+		where sup_id = #{sup_id}
+	</update>
+	<!--查询送货人员或者安装人员全部数量-->
+	<select id="getDeliveryCount" resultType="int" parameterType="map">
+		select count(0) from t_deli_inst_man
+		where 1=1
+		<if test="type!=null and type!='' or type==0 ">
+			and type=#{type}
+		</if>
+		<if test="supplier_id!=null and supplier_id!=''">
+			and supplier_id=#{supplier_id}
+		</if>
+		<if test="input!=null and input!=''">
+			and ((`name` LIKE "%"#{input}"%")or(`phone_num` LIKE "%"#{input}"%"))
+		</if>
+	</select>
+	<!--查询送货人员或者安装人员-->
+	<select id="getDelivery" resultType="map" parameterType="map">
+		select id,user_id,supplier_id,`name`,dim_no,state
+	,type,sex,phone_num,create_time,update_time
+	from t_deli_inst_man
+		where 1=1
+		<if test="type!=null and type!='' or type==0 ">
+			and type=#{type}
+		</if>
+		<if test="supplier_id!=null and supplier_id!=''">
+			and supplier_id=#{supplier_id}
+		</if>
+		<if test="input!=null and input!=''">
+			and ((`name` LIKE "%"#{input}"%")or(`phone_num` LIKE "%"#{input}"%"))
+		</if>
+		ORDER BY create_time desc
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	<!--添加送货员或者安装员-->
+	<insert id="addDelivery" parameterType="map">
+		insert into t_deli_inst_man(user_id,supplier_id,`name`,dim_no,type,sex,phone_num,create_time)
+			value(#{user_id},#{supplier_id},#{name},#{dim_no},#{type},#{sex},#{phone_num},NOW())
+	</insert>
+	<!--修改送货，安装人员状态-->
+	<update id="updDelivery">
+		update t_deli_inst_man set state=#{state} where id=#{id}
+	</update>
+	<!--查看送货，安装人员对象-->
+	<select id="getDeliveryDetails" resultType="Map">
+		select*from t_deli_inst_man where 1=1
+		<if test="id!=null and id!=''">
+			and id=#{id}
+		</if>
+		<if test="type!=null and type!='' or type==0 ">
+			and type=#{type}
+		</if>
+		limit 0,1
+	</select>
+	<!--修改送货，安装人员-->
+	<update id="updDeliverys" parameterType="map">
+		update t_deli_inst_man
+		<set>
+			<if test="name!=null">`name`=#{name}</if>
+			<if test="dim_no!=null">,`dim_no`=#{dim_no}</if>
+			<if test="sex!=null">,`sex`=#{sex}</if>
+			<if test="phone_num!=null">,`phone_num`=#{phone_num}</if>
+		</set>
+		where id=#{id}
+	</update>
+	<!--查询所有商品总条数-->
+	<select id="getGoodsListCount" resultType="int">
+		select count(0)from goods g
+		LEFT JOIN goods_category gc3 on gc3.cid=g.cid
+		LEFT JOIN goods_category gc2 on gc2.cid=gc3.parent_cid and gc2.lev&lt;gc3.lev
+			LEFT JOIN goods_category gc1 on gc1.cid=gc2.parent_cid and gc1.lev&lt;gc2.lev
+		where 1=1
+		<if test="sup_id!=null and sup_id!=''">
+			and g.sup_id=#{sup_id}
+		</if>
+		<if test="input!=null and input!=''">
+			and ((g.goods_name LIKE "%"#{input}"%")or(g.goods_num LIKE "%"#{input}"%"))
+		</if>
+	</select>
+	<!--查询所有供应商-->
+	<select id="getGoodsList" resultType="Map">
+		select g.goods_id,g.goods_num,g.goods_name,g.create_time,g.`status`,g.cid
+		,gc3.c_name gc3_c_name,gc2.c_name gc2_c_name,gc1.c_name gc1_c_name
+		from goods g
+		LEFT JOIN goods_category gc3 on gc3.cid=g.cid
+		LEFT JOIN goods_category gc2 on gc2.cid=gc3.parent_cid and gc2.lev&lt;gc3.lev
+		LEFT JOIN goods_category gc1 on gc1.cid=gc2.parent_cid and gc1.lev&lt;gc2.lev
+		where 1=1
+		<if test="sup_id!=null and sup_id!=''">
+			and g.sup_id=#{sup_id}
+		</if>
+		<if test="input!=null and input!=''">
+			and ((g.goods_name LIKE "%"#{input}"%")or(g.goods_num LIKE "%"#{input}"%"))
+		</if>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	<!--修改订单状态-->
+	<update id="updOrderState">
+		update t_order set status=#{state} where id=#{id}
+	</update>
+	<update id="updOrderRefuse">
+		update t_order set refuse=#{refuse} where id=#{id}
+	</update>
+	<!--根据id得到订单对象-->
+	<select id="getOrder" resultType="Map">
+		select*from t_order
+		where 1=1
+		<if test="id!=null and id!=''">
+			and id=#{id}
+		</if>
+		limit 0,1
+	</select>
+	<!--新增组织（组织类型为供应商）-->
+	<insert id="addOrgInfo" parameterType="map">
+		insert t_org_info(org_name,pid,create_date,create_by,type)value(#{org_name},#{pid},NOW(),#{create_by},#{type})
+	</insert>
+	<!--根据机构id得到供应商id-->
+	<select id="getSupplierByOrgId" resultType="Map">
+		select*from supplier s
+		where 1=1
+		 <if test="orgId!=null">
+			 and s.org_id=#{orgId}
+		 </if>
+		limit 0,1
+	</select>
+	<!--根据id得到订单对象-->
+	<select id="getOrderById" resultType="Map">
+		select `id`,`order_no`,`create_by`,reviewer_id,approver_id
+			,`org_id`,`status`,`money`,`approval_opinion`,`audit_opinion`
+			,`parent_id`,audit_time,`create_time`,`update_time`,supplier_id
+			,refuseCause,refuse,isUseful
+		from t_order where 1=1
+		<if test="id!=null">
+			and id=#{id}
+		</if>
+		limit 0,1
+	</select>
+	<!--根据订单id得到订单详情集合-->
+	<select id="getOrderDetailListByOrderId" resultType="map">
+		select od.id,od.order_id,od.order_no,od.org_id,od.goods_id
+			,od.sku_id,od.subjects,od.total_num,od.receive_num,od.price
+			,od.`status`,od.remark,od.create_time,od.update_time
+			,g.goods_name
+			from t_order_detail od
+			LEFT JOIN goods g on g.goods_id=od.goods_id
+			where 1=1
+			<if test="id!=null">
+				and od.order_id=#{id}
+			</if>
+	</select>
+	<!--根据商品id和skuid得到商品属性-->
+	<select id="getGoodsDetailList" resultType="map">
+		select goods.goods_name attr_value from goods
+		where goods.goods_id = #{goodsId}
+		union
+		select av.attr_value from sku_value_ref svr
+		left join attr_value av on av.av_id = svr.av_id
+		where svr.sku_id = #{skuId}
+		union
+		select av.attr_value from goods_value_ref gvr
+		left join attr_value av on av.av_id = gvr.av_id
+		where gvr.goods_id = #{goodsId}
+	</select>
+	<!--根据订单详情id得到送货集合-->
+	<select id="getReceiptList" resultType="map">
+		select rr.id t_receipt_record_id,rr.delivery_time,rr.install_time,rr.num
+		,r.id t_recipient_id,r.`name`,r.phone,r.address
+		from t_receipt_record rr
+		LEFT JOIN t_recipient r on r.id=rr.recipient_id
+		where 1=1
+		<if test="ogId!=null">
+			and og_id=#{ogId}
+		</if>
+	</select>
+</mapper>

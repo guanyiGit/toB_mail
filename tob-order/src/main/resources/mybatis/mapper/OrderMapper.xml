@@ -1,0 +1,993 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ordermanagement.dao.OrderDao">
+
+	<select id="get" resultType="com.entities.OrderDO">
+		select `id`,`order_no`,`create_by`,`org_id`,`status`,`money`,`approval_opinion`,`audit_opinion`,`parent_id`,`create_time`,`update_time` from t_order where id = #{value}
+	</select>
+
+	<select id="getIdList" parameterType="map" resultType="java.lang.Long">
+		SELECT
+		o.id
+		FROM
+		t_order o
+		<where>
+			<if test="supplierId != null">and o.supplier_id = #{supplierId}</if>
+			<if test="status != null">and o.status = #{status}</if>
+		</where>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="list" resultType="com.ordermanagement.vo.OrderDetailVO">
+		SELECT
+		u.name,
+		org.org_name,
+		detail.id,
+		detail.order_no,
+		detail.order_id,
+		detail.sku_id,
+		detail.goods_id,
+		detail.price,
+		detail.subjects,
+		detail.org_id,
+		detail.remark,
+		detail.total_num,
+		detail.STATUS,
+		detail.create_time,
+		detail.update_time,
+		info.url,
+		info.thumbnail_url
+		FROM
+		t_order_detail  detail
+		left join t_order o on o.id = detail.order_id
+		left join t_user_info u on u.id = o.create_by
+		left join t_org_info org on org.id = o.org_id
+		left join t_media_ref ref on ref.ref_id = detail.goods_id and ref.type = 1
+		left join t_media_info info on info.id = ref.media_id
+		<where>
+			<if test="idList != null and idList.size > 0">
+				detail.order_id IN
+				<foreach collection="idList" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		group by detail.id
+		<!--<choose>-->
+		<!--<when test="sort != null and sort.trim() != ''">-->
+		<!--order by ${sort} ${order}-->
+		<!--</when>-->
+		<!--<otherwise>-->
+		<!--order by id desc-->
+		<!--</otherwise>-->
+		<!--</choose>-->
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+
+	</select>
+
+	<select id="getAttrValue" parameterType="map" resultType="java.lang.String">
+		select goods.goods_name attr_value from goods
+		where goods.goods_id = #{goodsId}
+
+		union
+		select av.attr_value from sku_value_ref svr
+		left join attr_value av on av.av_id = svr.av_id
+		where svr.sku_id = #{skuId}
+
+		union
+		select av.attr_value from goods_value_ref gvr
+		left join attr_value av on av.av_id = gvr.av_id
+		where gvr.goods_id = #{goodsId}
+	</select>
+
+	<select id="count" resultType="int">
+		select count(*) from t_order
+		<where>
+			<if test="id != null and id != ''"> and id = #{id} </if>
+			<if test="orderNo != null and orderNo != ''"> and order_no = #{orderNo} </if>
+			<if test="createBy != null and createBy != ''"> and create_by = #{createBy} </if>
+			<if test="orgId != null and orgId != ''"> and org_id = #{orgId} </if>
+			<if test="supplierId != null and supplierId != ''"> and supplier_id = #{supplierId} </if>
+			<if test="status != null and status != ''"> and status = #{status} </if>
+			<if test="money != null and money != ''"> and money = #{money} </if>
+			<if test="approvalOpinion != null and approvalOpinion != ''"> and approval_opinion = #{approvalOpinion} </if>
+			<if test="auditOpinion != null and auditOpinion != ''"> and audit_opinion = #{auditOpinion} </if>
+			<if test="parentId != null and parentId != ''"> and parent_id = #{parentId} </if>
+			<if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
+			<if test="updateTime != null and updateTime != ''"> and update_time = #{updateTime} </if>
+		</where>
+	</select>
+
+	<insert id="save" parameterType="com.entities.OrderDO">
+		insert into t_order
+		(
+			`id`,
+			`order_no`,
+			`create_by`,
+			`org_id`,
+			`status`,
+			`money`,
+			`approval_opinion`,
+			`audit_opinion`,
+			`parent_id`,
+			`create_time`,
+			`update_time`
+		)
+		values
+		(
+			#{id},
+			#{orderNo},
+			#{createBy},
+			#{orgId},
+			#{status},
+			#{money},
+			#{approvalOpinion},
+			#{auditOpinion},
+			#{parentId},
+			#{createTime},
+			#{updateTime}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.entities.OrderDO">
+		update t_order
+		<set>
+			<if test="orderNo != null">`order_no` = #{orderNo}, </if>
+			<if test="createBy != null">`create_by` = #{createBy}, </if>
+			<if test="orgId != null">`org_id` = #{orgId}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="money != null">`money` = #{money}, </if>
+			<if test="approvalOpinion != null">`approval_opinion` = #{approvalOpinion}, </if>
+			<if test="auditOpinion != null">`audit_opinion` = #{auditOpinion}, </if>
+			<if test="parentId != null">`parent_id` = #{parentId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<delete id="remove">
+		delete from t_order where id = #{value}
+	</delete>
+
+	<delete id="batchRemove">
+		delete from t_order where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="deliveryManage" resultType="com.pojo.OrderGoods">
+		SELECT
+		a.id orderId,
+		a.order_no orderNo,
+		a.create_time createTime,
+		b.id goId,
+		b.sku_id skuId,
+		c.sku_num goodsNo,
+		c.sku_name goodsName,
+		d.num goodsNum,
+		d.receive_num receiveNum,
+		e.id recipientId,
+		e.name recipientName,
+		e.phone recipientPhone,
+		e.address recipientAddress
+		FROM
+		t_order a
+		LEFT JOIN t_order_detail b
+		on b.order_id=a.id
+		LEFT JOIN sku c
+		on c.sku_id=b.sku_id
+		LEFT JOIN goods f
+		ON f.goods_id=c.goods_id
+		LEFT JOIN t_receipt_record d
+		on d.og_id=b.id
+		LEFT JOIN t_recipient e
+		ON e.id=d.recipient_id
+		WHERE a.isUseful=1
+		AND a.status in (6,7)
+		AND b.status in (0,1)
+		AND d.num>d.receive_num
+		AND f.sup_id=#{supId}
+		<if test="orgId != null">
+			AND a.org_id=#{orgId}
+		</if>
+		<if test="input != null and input != 'null'">
+			AND a.order_no LIKE '%${input}%'
+		</if>
+		order by a.create_time desc
+		LIMIT #{start},#{size}
+	</select>
+	<select id="deliveryManageCount" resultType="java.lang.Integer">
+		SELECT
+		count(1)
+		FROM
+		t_order a
+		LEFT JOIN t_order_detail b
+		on b.order_id=a.id
+		LEFT JOIN sku c
+		on c.sku_id=b.sku_id
+		LEFT JOIN goods f
+		ON f.goods_id=c.goods_id
+		LEFT JOIN t_receipt_record d
+		on d.og_id=b.id
+		LEFT JOIN t_recipient e
+		ON e.id=d.recipient_id
+		WHERE a.isUseful=1
+		AND a.status in (6,7)
+		AND b.status in (0,1)
+		AND d.num>d.receive_num
+		AND f.sup_id=#{supId}
+		<if test="orgId != null">
+			AND a.org_id=#{orgId}
+		</if>
+		<if test="input != null and input != 'null'">
+			AND a.order_no LIKE '%${input}%'
+		</if>
+	</select>
+
+	<select id="selectOrgs" resultType="java.util.Map">
+<!--
+		SELECT
+		a.org_id orgId,
+		b.org_name orgName
+		FROM supplier a
+		LEFT JOIN
+		t_org_info b
+		ON b.id=a.org_id
+		WHERE
+		b.type=1
+		and
+		a.sup_id=#{supId}-->
+		SELECT
+		id orgId,
+		org_name orgName
+		FROM t_org_info
+		WHERE
+		id=(SELECT org_id FROM t_user_info WHERE id=(SELECT create_by FROM t_org_info WHERE id=#{supId}))
+		OR
+		pid=(SELECT org_id FROM t_user_info WHERE id=(SELECT create_by FROM t_org_info WHERE id=#{supId}))
+	</select>
+
+	<select id="selectHavesentSingles" resultType="com.pojo.HavesentSingle">
+		SELECT
+		a.id id,
+		a.send_no sendNo,
+		a.create_time sendSingleTime,
+		a.delivery_time outboundTime,
+		a.sign_closed_time signClosedTime,
+		a.status status,
+		b.name sendName,
+		b.phone_num sendPhone,
+		c.id closedId,
+		c.name closedName,
+		c.phone closedPhone,
+		c.address address
+		FROM t_delivery_record a
+		LEFT JOIN t_deli_inst_man b
+		ON b.id=a.send_id
+		AND b.type=0
+		LEFT JOIN t_recipient c
+		ON c.id=a.recipient_id
+		WHERE
+		a.sup_id=#{supId}
+		<if test="input != null and input != 'null'">
+			AND a.send_no LIKE '%${input}%'
+		</if>
+		ORDER BY a.create_time DESC
+		LIMIT #{start},#{size}
+	</select>
+	<select id="selectHavesentSinglesCount" resultType="java.lang.Integer">
+		SELECT
+		count(1)
+		FROM t_delivery_record a
+		LEFT JOIN t_deli_inst_man b
+		ON b.id=a.send_id
+		AND b.type=0
+		LEFT JOIN t_recipient c
+		ON c.id=a.recipient_id
+		WHERE
+		a.sup_id=#{supId}
+		<if test="input != null and input != 'null'">
+			AND a.send_no LIKE '%${input}%'
+		</if>
+	</select>
+
+	<select id="selectDeliveryGoods" resultType="com.pojo.GoodsInfo">
+		SELECT
+		aa.orderNo orderNo,
+		aa.goodsNo goodsNo,
+		aa.goodsName goodsName,
+		aa.goodsNum goodsNum,
+		aa.receiveNum receiveNum
+		FROM
+		t_delivery_detail bb
+		LEFT JOIN
+		(SELECT
+				a.id orderId,
+				a.order_no orderNo,
+				b.id goId,
+				b.sku_id skuId,
+				c.sku_num goodsNo,
+				c.sku_name goodsName,
+				d.num goodsNum,
+				d.receive_num receiveNum
+				FROM
+				t_order a
+				LEFT JOIN t_order_detail b
+				on b.order_id=a.id
+				LEFT JOIN sku c
+				on c.sku_id=b.sku_id
+				LEFT JOIN goods f
+				ON f.goods_id=c.goods_id
+				LEFT JOIN t_receipt_record d
+				on d.og_id=b.id
+				WHERE a.isUseful=1
+				AND a.status in (6,7,8,9)
+				AND d.recipient_id=#{sendId}
+				AND f.sup_id=#{supId}) aa
+		ON bb.og_id=aa.goId
+		WHERE bb.delivery_id=#{deliveryId}
+	</select>
+
+	<select id="selectOrderPhotos" resultType="com.pojo.Photos">
+		SELECT
+		a.id picId,
+		a.url imageUrl,
+		a.thumbnail_url thumbnailUrl
+		FROM
+		t_media_info a
+		LEFT JOIN t_media_ref b
+		ON b.media_id=a.id
+		WHERE
+		b.type=1
+		AND
+		b.ref_id=#{deliveryId}
+	</select>
+
+	<select id="selectDeliveryMans" resultType="com.pojo.DeliveryMan">
+		SELECT
+		id id,
+		name name,
+		phone_num phone
+		FROM t_deli_inst_man
+		WHERE
+		t_deli_inst_man.type=0
+		and state=0
+		and supplier_id=#{supId}
+	</select>
+
+	<!--订单。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。-->
+	<select id="selectMyOrders" resultType="com.pojo.OrderGoods">
+		SELECT
+		a.id orderId,
+		a.parent_id parentId,
+		a.order_no orderNo,
+		a.create_time createTime,
+		a.create_by buyerId,
+		a.org_id orgId,
+		g.name buyer,
+		b.id goId,
+		b.sku_id skuId,
+		b.price price,
+		b.total_num purchaseNum,
+		c.sku_num goodsNo,
+		c.sku_name goodsName,
+		h.org_name,
+		i.num purchaseNum,
+		j.thumbnail_url imgurl,
+		b.price*b.total_num totalPrice,
+		n.order_no parentNo
+		FROM
+		t_order a
+		LEFT JOIN t_order_detail b
+		on b.order_id=a.id
+		LEFT JOIN sku c
+		on c.sku_id=b.sku_id
+		LEFT JOIN goods f
+		ON f.goods_id=c.goods_id
+		LEFT JOIN t_user_info g
+		ON g.id=a.create_by
+		LEFT JOIN t_org_info h
+		ON h.id=a.org_id
+		LEFT JOIN
+		(SELECT od.sku_id,SUM(od.total_num) num
+		FROM t_order_detail od
+		LEFT JOIN t_order oo
+		ON oo.id=od.order_id
+		<where>
+			<if test="orgId != null">
+				oo.org_id=#{orgId}
+			</if>
+			<if test="userId != null">
+				AND oo.create_by=#{userId}
+			</if>
+		</where>
+		GROUP BY od.sku_id) i
+		ON i.sku_id=b.sku_id
+		LEFT JOIN
+		(SELECT
+		odd.goods_id,
+		img.thumbnail_url,
+		MAX(img.id)
+		FROM t_order_detail odd
+		LEFT JOIN t_media_ref tf
+		ON tf.ref_id=odd.goods_id
+		LEFT JOIN t_media_info img
+		ON img.id=tf.media_id
+		WHERE
+		tf.type=1
+		<if test="orgId != null">
+			AND odd.org_id=#{orgId}
+		</if>
+		GROUP BY odd.goods_id) j
+		ON j.goods_id=b.goods_id
+		LEFT JOIN goods k
+		ON k.goods_id=b.goods_id
+		LEFT JOIN supplier l
+		ON l.sup_id=k.sup_id
+		LEFT JOIN
+		(SELECT id,order_no
+		FROM t_order
+		WHERE parent_id=0
+		<if test="userId != null">
+			AND create_by=#{userId}
+		</if>
+		<if test="orgId != null">
+			AND org_id=#{orgId}
+		</if>) n
+		ON n.id=a.parent_id
+		WHERE
+		<if test="status == null">
+			a.status in (0,1,3,4,6,7,8,9)
+		</if>
+		<if test="status != null">
+			a.status=#{status}
+		</if>
+		<if test="month != null">
+			AND a.create_time>DATE_SUB(CURDATE(), INTERVAL #{month} MONTH)
+		</if>
+		<if test="input != null and input != 'null'">
+			AND (a.order_no LIKE '%${input}%' OR c.sku_name LIKE '%${input}%' OR l.sup_name LIKE '%${input}%')
+		</if>
+		ORDER BY a.create_time DESC
+	</select>
+
+	<!--查所有父订单和非子订单的有效订单-->
+	<select id="selectFatherOrders" resultType="com.pojo.FatherOrders">
+		SELECT
+		a.id orderId,
+		a.parent_id parentId,
+		a.order_no orderNo,
+		a.create_time createTime,
+		a.create_by buyerId,
+		a.org_id orgId,
+		a.status status,
+		a.isUseful,
+		a.sub_id subId,
+		g.name buyer,
+		h.org_name company,
+		j.sub_name subName
+		FROM
+		t_order a
+		LEFT JOIN t_user_info g
+		ON g.id=a.create_by
+		LEFT JOIN t_org_info h
+		ON h.id=a.org_id
+		LEFT JOIN t_subject j
+		ON j.id=a.sub_id
+		WHERE
+		a.parent_id=0
+		<if test="orgId != null">
+			AND a.org_id = #{orgId}
+		</if>
+		<if test="userId != null">
+			AND a.create_by = #{userId}
+		</if>
+		<if test="status == 11">
+			AND a.status !=0
+		</if>
+		<if test="status == 44">
+			AND a.status in (2,4,5,6,7,8,9)
+			AND a.approver_id is NOT NULL
+		</if>
+		<if test="status != null and status != 11 and status != 44">
+			AND a.status = #{status}
+		</if>
+		<if test="input !=null and input !='null'">
+			AND a.order_no LIKE '%${input}%'
+		</if>
+		order by a.create_time desc
+		LIMIT #{start},#{size}
+	</select>
+	<!--查所有父订单和非子订单的有效订单数量-->
+	<select id="selectFatherOrdersCount" resultType="java.lang.Integer">
+		SELECT
+		COUNT(1)
+		FROM
+		t_order a
+		LEFT JOIN t_user_info g
+		ON g.id=a.create_by
+		LEFT JOIN t_org_info h
+		ON h.id=a.org_id
+		WHERE
+		a.parent_id=0
+		<if test="orgId != null">
+			AND a.org_id = #{orgId}
+		</if>
+		<if test="userId != null">
+			AND a.create_by = #{userId}
+		</if>
+		<if test="status == 11">
+			AND a.status !=0
+		</if>
+		<if test="status == 44">
+			AND a.status in (2,4,5,6,7,8,9)
+			AND a.approver_id is NOT NULL
+		</if>
+		<if test="status != null and status != 11 and status != 44">
+			AND a.status = #{status}
+		</if>
+		<if test="input !=null and input !='null'">
+			AND a.order_no LIKE '%${input}%'
+		</if>
+	</select>
+
+	<!--查所有有效订单-->
+	<select id="selectEffectiveOrders" resultType="com.pojo.FatherOrders">
+		SELECT
+		a.id orderId,
+		a.parent_id parentId,
+		a.order_no orderNo,
+		a.create_time createTime,
+		a.create_by buyerId,
+		a.org_id orgId,
+		a.status status,
+		a.isUseful,
+		g.name buyer,
+		h.org_name company
+		FROM
+		t_order a
+		LEFT JOIN t_user_info g
+		ON g.id=a.create_by
+		LEFT JOIN t_org_info h
+		ON h.id=a.org_id
+		WHERE
+		a.isUseful=1
+		<if test="orgId != null">
+			AND a.org_id = #{orgId}
+		</if>
+		<if test="userId != null">
+			AND a.create_by = #{userId}
+		</if>
+		<if test="status == 11">
+			AND a.status !=0
+		</if>
+		<if test="status == 44">
+			AND a.status in (4,5,6,7,8,9)
+		</if>
+		<if test="status != null and status != 11 and status != 44">
+			AND a.status = #{status}
+		</if>
+		<if test="input !=null and input !='null'">
+			AND a.order_no LIKE '%${input}%'
+		</if>
+		order by a.create_time desc
+		LIMIT #{start},#{size}
+	</select>
+	<!--查所有有效订单数量-->
+	<select id="selectEffectiveOrdersCount" resultType="java.lang.Integer">
+		SELECT
+		COUNT(1)
+		FROM
+		t_order a
+		LEFT JOIN t_user_info g
+		ON g.id=a.create_by
+		LEFT JOIN t_org_info h
+		ON h.id=a.org_id
+		WHERE
+		a.isUseful=1
+		<if test="orgId != null">
+			AND a.org_id = #{orgId}
+		</if>
+		<if test="userId != null">
+			AND a.create_by = #{userId}
+		</if>
+		<if test="status == 11">
+			AND a.status !=0
+		</if>
+		<if test="status == 44">
+			AND a.status in (4,5,6,7,8,9)
+		</if>
+		<if test="status != null and status != 11 and status != 44">
+			AND a.status = #{status}
+		</if>
+		<if test="input !=null and input !='null'">
+			AND a.order_no LIKE '%${input}%'
+		</if>
+	</select>
+	<!--查询子订单-->
+	<select id="selectChildOrders" resultType="com.pojo.ChildOrders">
+		SELECT
+		a.id orderId,
+		a.order_no orderNo,
+		a.org_id orgId,
+		a.status status,
+		a.isUseful,
+		h.org_name company
+        FROM
+		t_order a
+		LEFT JOIN t_user_info g
+		ON g.id=a.create_by
+		LEFT JOIN t_org_info h
+		ON h.id=a.org_id
+		WHERE
+        a.parent_id=#{parentId}
+	</select>
+
+	<!--查订单的商品信息-->
+	<select id="selectOrderGoodsInfo" resultType="com.pojo.GoodsInfo">
+		SELECT
+		b.id goId,
+		b.sku_id skuId,
+		b.price price,
+		b.total_num goodsNum,
+		b.subjects subjects,
+		b.price*b.total_num priceTotal,
+		c.sku_num goodsNo,
+		c.sku_name goodsName,
+		i.num purchaseNum,
+		j.thumbnail_url imgurl
+		FROM t_order_detail b
+		LEFT JOIN sku c
+		on c.sku_id=b.sku_id
+		LEFT JOIN goods f
+		ON f.goods_id=c.goods_id
+		LEFT JOIN
+		(SELECT od.sku_id,SUM(od.total_num) num
+		FROM t_order_detail od
+		LEFT JOIN t_order oo
+		ON oo.id=od.order_id
+		WHERE
+		oo.org_id=#{orgId}
+		GROUP BY od.sku_id) i
+		ON i.sku_id=b.sku_id
+		LEFT JOIN
+		(SELECT
+		odd.goods_id,
+		img.thumbnail_url,
+		MAX(img.id)
+		FROM t_order_detail odd
+		LEFT JOIN t_media_ref tf
+		ON tf.ref_id=odd.goods_id
+		LEFT JOIN t_media_info img
+		ON img.id=tf.media_id
+		WHERE
+		tf.type=1
+		GROUP BY odd.goods_id) j
+		ON j.goods_id=b.goods_id
+		LEFT JOIN goods k
+		ON k.goods_id=b.goods_id
+		WHERE b.order_id=#{orderId}
+	</select>
+
+	<!--查询订单详情里每种商品的送货信息-->
+	<select id="selectReceivingRecords" resultType="com.pojo.ReceivingRecords">
+		SELECT
+		a.id id,
+		a.recipient_id recipientId,
+		a.num num,
+		a.delivery_time deliveryTime,
+		a.install_time installTime,
+		b.name name,
+		b.phone phone,
+		b.address address
+		FROM t_receipt_record a
+		LEFT JOIN t_recipient b
+		ON b.id=a.recipient_id
+		WHERE a.og_id=#{ogId}
+	</select>
+
+	<!--查询订单审核审批信息-->
+	<select id="selectApprovalReview" resultType="com.pojo.ApprovalReview">
+		SELECT
+		a.reviewer_id reviewerId,
+		a.approver_id approverId,
+		a.approval_opinion approvalOpinion,
+		a.audit_opinion auditOpinion,
+		a.audit_time auditTime,
+		a.approva_time approvaTime,
+		b.name reviewerName,
+		c.name approverName
+		FROM t_order a
+		LEFT JOIN t_user_info b
+		ON b.id=a.reviewer_id
+		LEFT JOIN t_user_info c
+		ON c.id=a.approver_id
+		WHERE a.id=#{orderId}
+	</select>
+
+	<!--审核审批订单-->
+	<update id="auditOrder" parameterType="com.pojo.ApprovalReview">
+		UPDATE t_order
+		<set>
+			status = #{status},
+			<if test="reviewerId != null">
+				reviewer_id=#{reviewerId},
+			</if>
+			<if test="approverId != null">
+				approver_id=#{approverId},
+			</if>
+			<if test="auditOpinion != null">
+				audit_opinion=#{auditOpinion},
+			</if>
+			<if test="approvalOpinion != null">
+				approval_opinion=#{approvalOpinion},
+			</if>
+			<if test="auditTime != null">
+				audit_time=#{auditTime},
+			</if>
+			<if test="approvaTime != null">
+				approva_time=#{approvaTime},
+			</if>
+		</set>
+		WHERE id = #{orderId}
+	</update>
+	<!--审核审批子订单-->
+	<update id="auditOrderchild" parameterType="com.pojo.ApprovalReview">
+		UPDATE t_order
+		<set>
+			status = #{status},
+			<if test="reviewerId != null">
+				reviewer_id=#{reviewerId},
+			</if>
+			<if test="approverId != null">
+				approver_id=#{approverId},
+			</if>
+			<if test="auditOpinion != null">
+				audit_opinion=#{auditOpinion},
+			</if>
+			<if test="approvalOpinion != null">
+				approval_opinion=#{approvalOpinion},
+			</if>
+			<if test="auditTime != null">
+				audit_time=#{auditTime},
+			</if>
+			<if test="approvaTime != null">
+				approva_time=#{approvaTime},
+			</if>
+		</set>
+		WHERE parent_id = #{orderId}
+	</update>
+
+	<!--改变父订单状态-->
+	<update id="updateFatherOrderStatus">
+		UPDATE t_order
+		SET
+		  status = #{status}
+		WHERE id = #{orderId}
+	</update>
+	<!--改变子订单状态-->
+	<update id="updateChildOrderStatus">
+		UPDATE t_order
+		SET
+		  status = #{status}
+		WHERE parent_id = #{orderId}
+	</update>
+
+	<!--查询订单费用-->
+	<select id="selectAdditionalFee">
+		select sum (money) from t_install_fee where order_id=#{orderId}
+	</select>
+
+	<!--新增订单记录-->
+	<insert id="addDeliveryRecord" useGeneratedKeys="true" keyProperty="deliveryNote.id" keyColumn="id">
+        INSERT INTO t_delivery_record
+        (create_by, sup_id,send_no,send_id,status,recipient_id,create_time)
+        VALUES
+        (#{deliveryNote.userId},#{deliveryNote.supId},#{deliveryNote.sendNo},#{deliveryNote.sendId},#{deliveryNote.status},#{deliveryNote.recipientId},#{deliveryNote.createTime})
+    </insert>
+	<!--新增订单详情-->
+	<insert id="addDeliveryDetail" parameterType="com.pojo.DeliverysDetail">
+        INSERT INTO t_delivery_detail
+        (og_id, delivery_id,real_num,send_id,recipient_id,create_time)
+        VALUES
+        (#{ogId},#{deliveryId},#{realNum},#{sendId},#{recipientId},#{createTime})
+    </insert>
+
+	<!--根据订单号查父订单号-->
+	<select id="selectParentOrderId" resultType="java.lang.Long">
+        select parent_id from t_order where id=#{orderId}
+    </select>
+
+	<!--修改发货记录表中已下发货单的货物数量-->
+	<update id="updateDeliveryNum">
+		UPDATE t_receipt_record
+		SET
+		  receive_num = receive_num+#{num}
+		WHERE og_id = #{ogId} and recipient_id = #{recipientId}
+	</update>
+
+	<resultMap id="DeliveryDetailVOResuleMap" type="com.pojo.DeliveryDetailVO">
+		<id property="createTime" column="dd_create_time"></id>
+		<association property="deliInstManDO" javaType="com.entities.DeliInstManDO">
+			<id property="createTime" column="dim__createTime"></id>
+		</association>
+		<association property="deliveryRecordDO" javaType="com.entities.DeliveryRecordDO">
+			<id property="createTime" column="dr_createTime"></id>
+		</association>
+	</resultMap>
+
+	<resultMap id="InstallDetailVOResuleMap" type="com.pojo.InstallDetailVO">
+		<id property="createTime" column="id_create_time"></id>
+		<association property="deliInstManDO" javaType="com.entities.DeliInstManDO">
+			<id property="createTime" column="dim__createTime"></id>
+		</association>
+		<association property="installRecordDO" javaType="com.entities.InstallRecordDO">
+			<id property="createTime" column="ir_createTime"></id>
+		</association>
+	</resultMap>
+
+	<!--查询所有订单 （子订单和父订单集合）-->
+	<select id="findOrderDetailsById" resultType="com.entities.OrderDO">
+		SELECT * FROM t_order o
+		WHERE  o.parent_id = #{orderId}
+		<if test="isOneself">
+			OR o.id = #{orderId}
+		</if>
+	</select>
+
+	<!--查询订单下的送货详情-->
+	<select id="findDeliveryDetailsInOrderIds" resultMap="DeliveryDetailVOResuleMap">
+		SELECT
+		<!--od.*,od.create_time od_create_time,-->
+		dd.*,dd.create_time dd_create_time,
+		dim.*,dim.create_time dim_create_time,
+		dr.*,dr.create_time dr_create_time
+		FROM t_order_detail od
+		INNER JOIN t_delivery_detail dd ON dd.og_id = od.id
+		LEFT JOIN t_deli_inst_man dim ON dim.id = dd.send_id
+		LEFT JOIN t_delivery_record dr ON dr.id = dd.delivery_id
+		WHERE od.order_id IN
+		<foreach collection="orderIds" item="orderId" open="(" close=")" separator=",">
+			#{orderId}
+		</foreach>
+	</select>
+
+	<!--查询订单下的安装详情-->
+	<select id="findInstallDetailsByOrderId" resultMap="InstallDetailVOResuleMap">
+		SELECT
+		<!--od.*,od.create_time od_create_time,-->
+		id.*,id.create_time id_create_time,
+		dim.*,dim.create_time dim_create_time,
+		ir.*,ir.create_time ir_create_time
+		FROM t_order_detail od
+		INNER JOIN t_install_detail id ON id.og_id = od.id
+		LEFT JOIN t_deli_inst_man dim ON dim.id = id.server_id
+		LEFT JOIN t_install_record ir ON ir.id = id.install_id
+		WHERE od.order_id IN
+		<foreach collection="orderIds" item="orderId" open="(" close=")" separator=",">
+			#{orderId}
+		</foreach>
+	</select>
+
+	<!--查询订单其他费用-->
+	<select id="findOtherCost" resultType="map">
+		SELECT iof.fee_type type,SUM(iof.price) 'sum'
+		FROM t_order_detail od,
+		<if test="type == 1">
+			t_install_detail id,
+		</if>
+		<if test="type == 2">
+			t_delivery_detail id,
+		</if>
+		t_other_fee iof
+		WHERE od.id = id.og_id
+		AND iof.detail_id = id.id
+		AND iof.fee_type = #{type}
+		AND od.order_id IN(
+		<foreach collection="orderIds" item="orderId" separator=",">#{orderId}</foreach>
+		)
+		GROUP BY iof.fee_type
+	</select>
+
+	<!--查询附加费用详情-->
+	<select id="findOtherCostInfos" resultType="com.pojo.OtherCostInfo">
+		(
+		SELECT
+		iof.*,dd.order_no orderNo,ir.install_no recordNum
+		FROM
+		(t_order_detail dd,t_install_detail id,t_other_fee iof)
+		LEFT JOIN t_install_record ir ON ir.id = id.install_id
+		WHERE dd.id = id.og_id
+		AND iof.detail_id = id.id
+		AND iof.ref_type = 1
+		AND dd.order_id IN (
+		<foreach collection="orderIds" item="orderId" separator=",">#{orderId}</foreach>
+		)
+		)
+		UNION ALL
+		(
+		SELECT
+		iof.*,dd.order_no orderNo,dr.send_no recordNum
+		FROM
+		(t_order_detail dd,t_delivery_detail id,t_other_fee iof)
+		LEFT JOIN t_delivery_record dr ON dr.id = id.delivery_id
+		WHERE dd.id = id.og_id
+		AND iof.detail_id = id.id
+		AND iof.ref_type = 2
+		AND dd.order_id IN (
+		<foreach collection="orderIds" item="orderId" separator=",">#{orderId}</foreach>
+		)
+		)
+	</select>
+	<!--根据机构id得到供应商id-->
+	<select id="getSupplierByOrgId" resultType="Map">
+		select*from supplier s
+		where 1=1
+		<if test="orgId!=null">
+			and s.org_id=#{orgId}
+		</if>
+		limit 0,1
+	</select>
+	<!--得到所有orgId集合-->
+	<select id="getOrgInfoList" resultType="com.entities.OrgInfo">
+		select * from t_org_info
+	</select>
+	<!--根据orgId得到资产清单集合-->
+	<select id="getAssetsList" resultType="map">
+		select a.id,a.assets_name,a.assets_category,a.assets_model,a.unit,a.amount,a.price
+		,a.sum_price,a.org_id,a.t_code,a.buyer_id,a.create_date
+		,o.org_name,o.org_no
+		from t_assets a
+		LEFT JOIN t_org_info o on o.id=a.org_id
+			where 1=1 and a.org_id in
+			<foreach item="item" index="index" collection="orgIdList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+	</select>
+	<!--添加资产清单-->
+	<insert id="addAssets">
+		insert t_assets(assets_name,assets_category,assets_model,unit
+			,amount,price,sum_price,org_id
+			,t_code,buyer_id,create_date)
+			value
+			<foreach item="item" collection="list" separator=",">
+				(#{item.assets_name},#{item.assets_category},#{item.assets_model},#{item.unit}
+				,#{item.amount},#{item.price},#{item.sum_price},#{item.org_id}
+				,#{item.t_code},#{item.buyer_id},now())
+			</foreach>
+	</insert>
+	<!--根据订单id得到订单详情集合-->
+	<select id="getOrderDetailListByOrderId" resultType="map">
+		select od.id,od.order_id,od.order_no,od.org_id,od.goods_id
+		,od.sku_id,od.subjects,od.total_num,od.receive_num,od.price
+		,od.`status`,od.remark,od.create_time,od.update_time
+		,g.goods_name
+		from t_order_detail od
+		LEFT JOIN goods g on g.goods_id=od.goods_id
+		where 1=1
+		<if test="id!=null">
+			and od.order_id=#{id}
+		</if>
+	</select>
+	<!--根据商品id和skuid得到商品属性-->
+	<select id="getGoodsDetailList" resultType="map">
+		select av.attr_value from sku_value_ref svr
+		left join attr_value av on av.av_id = svr.av_id
+		where svr.sku_id = #{skuId}
+		union
+		select av.attr_value from goods_value_ref gvr
+		left join attr_value av on av.av_id = gvr.av_id
+		where gvr.goods_id = #{goodsId}
+	</select>
+	<!--得到最大清单id-->
+	<select id="getAssetsIdMax" resultType="int">
+		select MAX(id) from t_assets
+	</select>
+</mapper>

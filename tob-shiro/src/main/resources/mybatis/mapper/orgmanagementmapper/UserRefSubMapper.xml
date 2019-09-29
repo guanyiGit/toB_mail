@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.orgmanagement.dao.UserRefSubDao">
+
+	<select id="get" resultType="com.orgmanagement.domain.UserRefSubDO">
+		select `id`,`user_id`,`sub_id`,`create_time` from t_user_ref_sub where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.orgmanagement.domain.UserRefSubDO">
+		select `id`,`user_id`,`sub_id`,`create_time` from t_user_ref_sub
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="userId != null and userId != ''"> and user_id = #{userId} </if>
+		  		  <if test="subId != null and subId != ''"> and sub_id = #{subId} </if>
+		  		  <if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_user_ref_sub
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="userId != null and userId != ''"> and user_id = #{userId} </if>
+		  		  <if test="subId != null and subId != ''"> and sub_id = #{subId} </if>
+		  		  <if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.orgmanagement.domain.UserRefSubDO" useGeneratedKeys="true" keyProperty="id">
+		insert into t_user_ref_sub
+		(
+			`user_id`, 
+			`sub_id`, 
+			`create_time`
+		)
+		values
+		(
+			#{userId}, 
+			#{subId}, 
+			#{createTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.orgmanagement.domain.UserRefSubDO">
+		update t_user_ref_sub 
+		<set>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="subId != null">`sub_id` = #{subId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_user_ref_sub where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_user_ref_sub where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<delete id="removeByUserId">
+		delete from  t_user_ref_sub  where user_id = #{userId}
+	</delete>
+
+	<insert id="batchSave">
+		INSERT INTO t_user_ref_sub(user_id, sub_id,) values
+		<foreach item="item" index="index" collection="list"
+				 separator=",">
+			(#{item.userId},#{item.subId},)
+		</foreach>
+	</insert>
+
+</mapper>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.SkuValueRefDao">
+
+	<select id="get" resultType="com.entities.SkuValueRefDO">
+		select `svr_id`,`av_id`,`sku_id`,`create_time`,`update_time` from sku_value_ref where svr_id = #{value}
+	</select>
+
+	<select id="list" resultType="com.entities.SkuValueRefDO">
+		select `svr_id`,`av_id`,`sku_id`,`create_time`,`update_time` from sku_value_ref
+        <where>  
+		  		  <if test="svrId != null and svrId != ''"> and svr_id = #{svrId} </if>
+		  		  <if test="avId != null and avId != ''"> and av_id = #{avId} </if>
+		  		  <if test="skuId != null and skuId != ''"> and sku_id = #{skuId} </if>
+		  		  <if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
+		  		  <if test="updateTime != null and updateTime != ''"> and update_time = #{updateTime} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by svr_id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from sku_value_ref
+		 <where>  
+		  		  <if test="svrId != null and svrId != ''"> and svr_id = #{svrId} </if>
+		  		  <if test="avId != null and avId != ''"> and av_id = #{avId} </if>
+		  		  <if test="skuId != null and skuId != ''"> and sku_id = #{skuId} </if>
+		  		  <if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
+		  		  <if test="updateTime != null and updateTime != ''"> and update_time = #{updateTime} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.entities.SkuValueRefDO" useGeneratedKeys="true" keyProperty="svrId">
+		insert into sku_value_ref
+		(
+			`av_id`, 
+			`sku_id`, 
+			`create_time`, 
+			`update_time`
+		)
+		values
+		(
+			#{avId}, 
+			#{skuId}, 
+			#{createTime}, 
+			#{updateTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.entities.SkuValueRefDO">
+		update sku_value_ref 
+		<set>
+			<if test="avId != null">`av_id` = #{avId}, </if>
+			<if test="skuId != null">`sku_id` = #{skuId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where svr_id = #{svrId}
+	</update>
+	
+	<delete id="remove">
+		delete from sku_value_ref where svr_id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from sku_value_ref where svr_id in 
+		<foreach item="svrId" collection="array" open="(" separator="," close=")">
+			#{svrId}
+		</foreach>
+	</delete>
+
+</mapper>

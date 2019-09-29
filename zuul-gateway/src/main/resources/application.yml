@@ -1,0 +1,50 @@
+server:
+  port: 9527
+
+spring:
+  application:
+    name: tob-shopping-zuul-gateway
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://192.168.0.69:7001/eureka/,http://192.168.0.69:7002/eureka/,http://192.168.0.69:7003/eureka/
+  instance:
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}/${spring.application.instance_id:${spring.application.name}}
+    prefer-ip-address: true
+zuul:
+#  ignored-services: "*"
+  prefix: /biz
+#  routes:
+#    tob-budget:
+#        path: /tob-budget/**
+#        url: http://localhost:9002
+#    tob-mall:
+#        path: /tob-mall/**
+#        url: http://localhost:9006
+#    tob-goods:
+#        path: /tob-goods/**
+#        url: http://localhost:9005
+#    tob-order:
+#        path: /tob-order/**
+#        url: http://localhost:9001
+#    tob-shopping-cart:
+#        path: /tob-shopping-cart/**
+#        url: http://localhost:9007
+#    tob-supplier:
+#        path: /tob-supplier/**
+#        url: http://localhost:9004
+#    tob-shiro:
+#        path: /tob-shiro/**
+#        url: http://localhost:9003
+#      serviceId: tob-budget
+  host:
+    max-total-connections: 500000
+#    tob-shopping-cart: /card/**
+#    tob-shiro: /shiro/**
+#    tob-order: /order/**
+
+
+logging:
+  level: debug

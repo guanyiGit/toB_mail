@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.CategoryDao">
+
+	<select id="get" resultType="com.entities.CategoryDO">
+		select `sc_id`,`sc_name`,`description`,`status`,`org_id`,`create_time`,`update_time` from supplier_category where sc_id = #{value}
+	</select>
+
+	<select id="list" resultType="com.entities.CategoryDO">
+		select `sc_id`,`sc_name`,`description`,`status`,`org_id`,`create_time`,`update_time` from supplier_category
+        <where>  
+		  		  <if test="scId != null and scId != ''"> and sc_id = #{scId} </if>
+		  		  <if test="scName != null and scName != ''"> and sc_name = #{scName} </if>
+		  		  <if test="description != null and description != ''"> and description = #{description} </if>
+		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="orgId != null and orgId != ''"> and org_id = #{orgId} </if>
+		  		  <if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
+		  		  <if test="updateTime != null and updateTime != ''"> and update_time = #{updateTime} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by sc_id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from supplier_category
+		 <where>  
+		  		  <if test="scId != null and scId != ''"> and sc_id = #{scId} </if>
+		  		  <if test="scName != null and scName != ''"> and sc_name = #{scName} </if>
+		  		  <if test="description != null and description != ''"> and description = #{description} </if>
+		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="orgId != null and orgId != ''"> and org_id = #{orgId} </if>
+		  		  <if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
+		  		  <if test="updateTime != null and updateTime != ''"> and update_time = #{updateTime} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.entities.CategoryDO" useGeneratedKeys="true" keyProperty="scId">
+		insert into supplier_category
+		(
+			`sc_name`, 
+			`description`, 
+			`status`, 
+			`org_id`, 
+			`create_time`, 
+			`update_time`
+		)
+		values
+		(
+			#{scName}, 
+			#{description}, 
+			#{status}, 
+			#{orgId}, 
+			#{createTime}, 
+			#{updateTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.entities.CategoryDO">
+		update supplier_category 
+		<set>
+			<if test="scName != null">`sc_name` = #{scName}, </if>
+			<if test="description != null">`description` = #{description}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="orgId != null">`org_id` = #{orgId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where sc_id = #{scId}
+	</update>
+	
+	<delete id="remove">
+		delete from supplier_category where sc_id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from supplier_category where sc_id in 
+		<foreach item="scId" collection="array" open="(" separator="," close=")">
+			#{scId}
+		</foreach>
+	</delete>
+	<!--**********************************************************************************************************-->
+	<!--**********************************************************************************************************-->
+	<!--**********************************************************************************************************-->
+	<!--得到供应商分类集合-->
+	<select id="getCategoryList" resultType="map">
+		select `sc_id`,`sc_name`,`description`,`status`,`org_id`,`create_time`,`update_time`
+		from supplier_category	where 1=1
+			<if test="orgId != null and orgId != ''"> and org_id = #{orgId} </if>
+	</select>
+	<!--得到经营范围-->
+	<select id="getCategoryType" resultType="map">
+		select dictionary_id,dictionary_field,dictionary_value
+	,dictionary_describe,creation_time from t_dictionary
+	where 1=1 and dictionary_field='category_type' and dictionary_value=#{orgId}
+	</select>
+</mapper>

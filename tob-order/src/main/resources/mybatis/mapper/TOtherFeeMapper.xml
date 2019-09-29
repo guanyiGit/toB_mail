@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.details.TOtherFeeMapper" >
+  <resultMap id="BaseResultMap" type="com.entities.TOtherFee" >
+    <id column="fee_id" property="feeId" jdbcType="BIGINT" />
+    <result column="fee_type" property="feeType" jdbcType="INTEGER" />
+    <result column="ref_type" property="refType" jdbcType="INTEGER" />
+    <result column="detail_id" property="detailId" jdbcType="BIGINT" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="creation_time" property="creationTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    fee_id, fee_type, ref_type, detail_id, price, creation_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.entities.TOtherFeeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_other_fee
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_other_fee
+    where fee_id = #{feeId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_other_fee
+    where fee_id = #{feeId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.entities.TOtherFeeExample" >
+    delete from t_other_fee
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.entities.TOtherFee" >
+    insert into t_other_fee (fee_id, fee_type, ref_type, 
+      detail_id, price, creation_time
+      )
+    values (#{feeId,jdbcType=BIGINT}, #{feeType,jdbcType=INTEGER}, #{refType,jdbcType=INTEGER}, 
+      #{detailId,jdbcType=BIGINT}, #{price,jdbcType=DECIMAL}, #{creationTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.entities.TOtherFee" >
+    insert into t_other_fee
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="feeId != null" >
+        fee_id,
+      </if>
+      <if test="feeType != null" >
+        fee_type,
+      </if>
+      <if test="refType != null" >
+        ref_type,
+      </if>
+      <if test="detailId != null" >
+        detail_id,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="creationTime != null" >
+        creation_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="feeId != null" >
+        #{feeId,jdbcType=BIGINT},
+      </if>
+      <if test="feeType != null" >
+        #{feeType,jdbcType=INTEGER},
+      </if>
+      <if test="refType != null" >
+        #{refType,jdbcType=INTEGER},
+      </if>
+      <if test="detailId != null" >
+        #{detailId,jdbcType=BIGINT},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="creationTime != null" >
+        #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.entities.TOtherFeeExample" resultType="java.lang.Integer" >
+    select count(*) from t_other_fee
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update t_other_fee
+    <set >
+      <if test="record.feeId != null" >
+        fee_id = #{record.feeId,jdbcType=BIGINT},
+      </if>
+      <if test="record.feeType != null" >
+        fee_type = #{record.feeType,jdbcType=INTEGER},
+      </if>
+      <if test="record.refType != null" >
+        ref_type = #{record.refType,jdbcType=INTEGER},
+      </if>
+      <if test="record.detailId != null" >
+        detail_id = #{record.detailId,jdbcType=BIGINT},
+      </if>
+      <if test="record.price != null" >
+        price = #{record.price,jdbcType=DECIMAL},
+      </if>
+      <if test="record.creationTime != null" >
+        creation_time = #{record.creationTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update t_other_fee
+    set fee_id = #{record.feeId,jdbcType=BIGINT},
+      fee_type = #{record.feeType,jdbcType=INTEGER},
+      ref_type = #{record.refType,jdbcType=INTEGER},
+      detail_id = #{record.detailId,jdbcType=BIGINT},
+      price = #{record.price,jdbcType=DECIMAL},
+      creation_time = #{record.creationTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.entities.TOtherFee" >
+    update t_other_fee
+    <set >
+      <if test="feeType != null" >
+        fee_type = #{feeType,jdbcType=INTEGER},
+      </if>
+      <if test="refType != null" >
+        ref_type = #{refType,jdbcType=INTEGER},
+      </if>
+      <if test="detailId != null" >
+        detail_id = #{detailId,jdbcType=BIGINT},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="creationTime != null" >
+        creation_time = #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where fee_id = #{feeId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.entities.TOtherFee" >
+    update t_other_fee
+    set fee_type = #{feeType,jdbcType=INTEGER},
+      ref_type = #{refType,jdbcType=INTEGER},
+      detail_id = #{detailId,jdbcType=BIGINT},
+      price = #{price,jdbcType=DECIMAL},
+      creation_time = #{creationTime,jdbcType=TIMESTAMP}
+    where fee_id = #{feeId,jdbcType=BIGINT}
+  </update>
+</mapper>

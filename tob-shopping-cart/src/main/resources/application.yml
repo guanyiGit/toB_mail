@@ -1,0 +1,132 @@
+server:
+  port: 9007
+  session-timeout: 5184000 #session过期时间为2个月(60天)
+
+mybatis:
+  config-location: classpath:mybatis/mybatis.cfg.xml        # mybatis配置文件所在路径
+  type-aliases-package: com.entities    # 所有Entity别名类所在包
+  mapper-locations: classpath:mybatis/mapper/**/*.xml  # mapper映射文件
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: tob-shopping-cart
+  aop:
+       proxy-target-class: true
+  thymeleaf:
+    mode: LEGACYHTML5
+    cache: false
+    jackson:
+      time-zone: GMT+8
+      date-format: yyyy-MM-dd HH:mm:ss
+#  servlet:
+#    multipart:
+#      max-file-size: 50Mb
+#      max-request-size: 50Mb
+  http:
+    multipart:
+      maxFileSize: 50MB
+      maxRequestSize: 50MB
+    devtools:
+      restart:
+        enabled: true
+  cache:
+    type: ehcache
+    ehcache:
+      config: classpath:config/ehcache.xml
+  datasource:
+      type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
+      driver-class-name: com.mysql.jdbc.Driver              # mysql驱动包
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      filters: stat,wall,log4j
+      maxPoolPreparedStatementPerConnectionSize: 20
+      useGlobalDataSourceStat: true
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+
+  redis:
+   timeout: 10000
+   pool:
+     max-active: 100
+     min-idle: 10
+     max-idle: 8
+     max-wait: -1
+
+info:
+  app:
+   artifactId: $project.artifactId$
+   groupId: $project.groupId$
+   version: $project.version$
+   name: ${spring.application.name}
+   instance-id: ${eureka.instance.instance-id}
+
+# 分页配置
+pagehelper:
+ helper-dialect: mysql
+ reasonable: true
+ support-methods-arguments: true
+ params: count=countSql
+
+logging:
+  level: debug
+---
+############################################################# 开发环境 dev ################################################
+spring:
+   profiles: dev
+   datasource:
+    url: jdbc:mysql://192.168.0.69:3308/tob-shopping-mall?useUnicode=true&characterEncoding=utf8              # 数据库名称
+    username: root
+    password: 123456
+   redis:
+     host: 192.168.0.69
+     port: 6380
+     password:
+eureka:
+  client: #客户端注册进eureka服务列表内
+    service-url:
+      defaultZone: http://192.168.0.69:7001/eureka/,http://192.168.0.69:7002/eureka/,http://192.168.0.69:7003/eureka/
+  instance:
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}/${spring.application.instance_id:${spring.application.name}}   #自定义服务名称信息
+    prefer-ip-address: true     #访问路径可以显示IP地址
+#fdfs
+dfs:
+  prefix: https://nm.soholy.cn/pic/
+  confs:
+    - 192.168.0.69:22122
+
+#debug: true
+---
+############################################################# 生产环境环境 ################################################
+
+spring:
+  profiles: prod
+  datasource:
+    url: jdbc:mysql://120.78.137.116:3306/nm?useUnicode=true&characterEncoding=utf8              # 数据库名称
+    username: nm_0820
+    password: Shl@0820
+  redis:
+    host: 192.168.0.69
+    port: 6380
+    password:
+eureka:
+  client: #客户端注册进eureka服务列表内
+    service-url:
+      defaultZone: http://192.168.0.69:7001/eureka/,http://192.168.0.69:7002/eureka/,http://192.168.0.69:7003/eureka/
+  instance:
+    instance-id: tob-shopping-cart:9007   #自定义服务名称信息
+    prefer-ip-address: true     #访问路径可以显示IP地址
+#fdfs
+dfs:
+  prefix: https://nm.soholy.cn/pic/
+  confs:
+    - 120.78.137.116:22122

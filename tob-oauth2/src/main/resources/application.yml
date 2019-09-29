@@ -1,0 +1,17 @@
+server:
+  port: 9009   #启用SpringSecurity的安全配置项
+
+spring:
+  cache:
+    type: redis
+    redis:
+      cache-null-values: false
+      time-to-live: 3600000ms
+  redis:
+    host: 192.168.0.69
+    port: 6381
+    database: 5
+#    password: Rd^is*8
+logging:
+  level:
+    root: info

@@ -1,0 +1,747 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.TBudgetAllocationsMapper" >
+  <resultMap id="BaseResultMap" type="com.entities.TBudgetAllocations" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="org_id" property="orgId" jdbcType="INTEGER" />
+    <result column="plan_id" property="planId" jdbcType="INTEGER" />
+    <result column="subject_id" property="subjectId" jdbcType="INTEGER" />
+    <result column="budget_year" property="budgetYear" jdbcType="INTEGER" />
+    <result column="effective_month" property="effectiveMonth" jdbcType="INTEGER" />
+    <result column="budget_amount" property="budgetAmount" jdbcType="DOUBLE" />
+    <result column="create_by" property="createBy" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, org_id, plan_id, subject_id, budget_year, effective_month, budget_amount, create_by, 
+    create_date
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.entities.TBudgetAllocationsExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_budget_allocations
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_budget_allocations
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_budget_allocations
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.entities.TBudgetAllocationsExample" >
+    delete from t_budget_allocations
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.entities.TBudgetAllocations" >
+    insert into t_budget_allocations (id, org_id, plan_id, 
+      subject_id, budget_year, effective_month, 
+      budget_amount, create_by, create_date
+      )
+    values (#{id,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, #{planId,jdbcType=INTEGER}, 
+      #{subjectId,jdbcType=INTEGER}, #{budgetYear,jdbcType=INTEGER}, #{effectiveMonth,jdbcType=INTEGER}, 
+      #{budgetAmount,jdbcType=DOUBLE}, #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.entities.TBudgetAllocations" >
+    insert into t_budget_allocations
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="orgId != null" >
+        org_id,
+      </if>
+      <if test="planId != null" >
+        plan_id,
+      </if>
+      <if test="subjectId != null" >
+        subject_id,
+      </if>
+      <if test="budgetYear != null" >
+        budget_year,
+      </if>
+      <if test="effectiveMonth != null" >
+        effective_month,
+      </if>
+      <if test="budgetAmount != null" >
+        budget_amount,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null" >
+        #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="planId != null" >
+        #{planId,jdbcType=INTEGER},
+      </if>
+      <if test="subjectId != null" >
+        #{subjectId,jdbcType=INTEGER},
+      </if>
+      <if test="budgetYear != null" >
+        #{budgetYear,jdbcType=INTEGER},
+      </if>
+      <if test="effectiveMonth != null" >
+        #{effectiveMonth,jdbcType=INTEGER},
+      </if>
+      <if test="budgetAmount != null" >
+        #{budgetAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.entities.TBudgetAllocationsExample" resultType="java.lang.Integer" >
+    select count(*) from t_budget_allocations
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_budget_allocations
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.orgId != null" >
+        org_id = #{record.orgId,jdbcType=INTEGER},
+      </if>
+      <if test="record.planId != null" >
+        plan_id = #{record.planId,jdbcType=INTEGER},
+      </if>
+      <if test="record.subjectId != null" >
+        subject_id = #{record.subjectId,jdbcType=INTEGER},
+      </if>
+      <if test="record.budgetYear != null" >
+        budget_year = #{record.budgetYear,jdbcType=INTEGER},
+      </if>
+      <if test="record.effectiveMonth != null" >
+        effective_month = #{record.effectiveMonth,jdbcType=INTEGER},
+      </if>
+      <if test="record.budgetAmount != null" >
+        budget_amount = #{record.budgetAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="record.createBy != null" >
+        create_by = #{record.createBy,jdbcType=INTEGER},
+      </if>
+      <if test="record.createDate != null" >
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update t_budget_allocations
+    set id = #{record.id,jdbcType=INTEGER},
+      org_id = #{record.orgId,jdbcType=INTEGER},
+      plan_id = #{record.planId,jdbcType=INTEGER},
+      subject_id = #{record.subjectId,jdbcType=INTEGER},
+      budget_year = #{record.budgetYear,jdbcType=INTEGER},
+      effective_month = #{record.effectiveMonth,jdbcType=INTEGER},
+      budget_amount = #{record.budgetAmount,jdbcType=DOUBLE},
+      create_by = #{record.createBy,jdbcType=INTEGER},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.entities.TBudgetAllocations" >
+    update t_budget_allocations
+    <set >
+      <if test="orgId != null" >
+        org_id = #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="planId != null" >
+        plan_id = #{planId,jdbcType=INTEGER},
+      </if>
+      <if test="subjectId != null" >
+        subject_id = #{subjectId,jdbcType=INTEGER},
+      </if>
+      <if test="budgetYear != null" >
+        budget_year = #{budgetYear,jdbcType=INTEGER},
+      </if>
+      <if test="effectiveMonth != null" >
+        effective_month = #{effectiveMonth,jdbcType=INTEGER},
+      </if>
+      <if test="budgetAmount != null" >
+        budget_amount = #{budgetAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.entities.TBudgetAllocations" >
+    update t_budget_allocations
+    set org_id = #{orgId,jdbcType=INTEGER},
+      plan_id = #{planId,jdbcType=INTEGER},
+      subject_id = #{subjectId,jdbcType=INTEGER},
+      budget_year = #{budgetYear,jdbcType=INTEGER},
+      effective_month = #{effectiveMonth,jdbcType=INTEGER},
+      budget_amount = #{budgetAmount,jdbcType=DOUBLE},
+      create_by = #{createBy,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 插入预算分配表 -->
+  <insert id="add" parameterType="java.util.List">
+  		insert into t_budget_allocations (org_id,subject_id,budget_year, effective_month, 
+      budget_amount,create_date,type
+      )
+    values 
+    <foreach collection="list" separator="," item="i">
+    (#{i.id,jdbcType=INTEGER},#{i.subjectId,jdbcType=INTEGER},
+       #{i.budgetYear,jdbcType=INTEGER}, #{i.effectiveMonth,jdbcType=INTEGER}, 
+      #{i.budgetAmount,jdbcType=DOUBLE},#{i.createDate},#{i.type}
+      )
+    </foreach>
+  </insert>
+  
+    <!-- 插入预算分配表1(总额) -->
+  <insert id="add1" parameterType="java.util.List">
+  		insert into t_budget_allocations (org_id,budget_year, effective_month, 
+      budget_amount,p_id,plan_id,type,budget_category
+      )
+    values 
+    <foreach collection="list" separator="," item="i">
+    (#{i.orgId,jdbcType=INTEGER},
+       #{i.budgetYear,jdbcType=INTEGER}, #{i.effectiveMonth,jdbcType=INTEGER}, 
+      #{i.totalAmount,jdbcType=DOUBLE},#{i.pId},#{i.planId},0,1
+      )
+    </foreach>
+  </insert>
+  
+   <!-- 插入预算分配表2(科目) -->
+  <insert id="add2">
+  		insert into t_budget_allocations (org_id,subject_id,budget_year, effective_month, 
+      budget_amount,p_id,plan_id,type,budget_category
+      )
+    values 
+    (#{orgId,jdbcType=INTEGER},#{subId,jdbcType=INTEGER},
+       #{budgetYear,jdbcType=INTEGER}, #{effectiveMonth,jdbcType=INTEGER}, 
+      #{subAmount,jdbcType=DOUBLE},#{pId},#{planId},1,1
+      )
+  </insert>
+  <!-- 检查组织的科目是否被分配 -->
+  <select id="checkAllocation" resultType="int">
+  	SELECT COUNT(*) FROM t_budget_allocations WHERE type=1 AND budget_category=1 AND org_id=#{orgId} and budget_year=#{year}
+  </select>
+  
+  
+  <!-- 检查本部门是否已经给下级部门分配预算 -->
+  <select id="checkAllocation2" resultType="int">
+  	SELECT COUNT(*) FROM t_budget_allocations WHERE type=1 AND budget_category=1 AND p_id=#{orgId} and budget_year=#{year}
+  </select>
+  
+  <!--分配列表 -->
+  <select id="allocationList"  resultType="com.vo.TBudgetAllocationsVo">
+  		SELECT 
+  				a.budget_year budgetYear,a.effective_month effectiveMonth,a.org_id orgId, a.subject_id subjectId,
+  			   o.org_name orgName,s.sub_name subName,a.budget_amount budgetAmount,a.budget_month budgetMonth,
+  			   a.budget_category budgetCategory,a.type budgetType
+  	    FROM t_budget_allocations a LEFT JOIN t_org_info o ON a.org_id=o.id 
+  	    	   LEFT JOIN t_subject s ON a.subject_id = s.id 
+  	    	   <where>
+	  	    	   <if test="budgetYear !=0">
+	  	   			and a.budget_year = #{budgetYear}
+		  	   		</if>
+		  	   		<if test="orgId !=0">
+		  	   			and a.org_id = #{orgId}
+		  	   		</if>
+		  	   		<if test="searchKey !=null and searchKey !=''">
+				  		and	sub_name like "%"#{searchKey}"%"
+		  			</if>
+  					and a.p_id=#{currOrgId}
+  					<if test="budgetCategory !=0">
+		  	   			and a.budget_category=#{budgetCategory}
+		  	   		</if>
+  	    	   </where>
+  	    	
+  	   	LIMIT #{offset},#{limit}
+  </select>
+  <!-- 分配总记录数 -->
+  <select id="countAllocation" resultType="int">
+  		SELECT count(*)
+  	    FROM t_budget_allocations a LEFT JOIN t_org_info o ON a.org_id=o.id 
+  	    	   LEFT JOIN t_subject s ON a.subject_id = s.id
+  	   	 <where>
+	  	    	   <if test="budgetYear !=0">
+	  	   			and a.budget_year = #{budgetYear}
+		  	   		</if>
+		  	   		<if test="orgId !=0">
+		  	   			and a.org_id = #{orgId}
+		  	   		</if>
+		  	   		<if test="searchKey !=null and searchKey !=''">
+				  		and	sub_name like "%"#{searchKey}"%"
+		  			</if>
+		  			<if test="budgetCategory !=0">
+		  	   			and a.budget_category=#{budgetCategory}
+		  	   		</if>
+  					and a.p_id=#{currOrgId}
+  	    	   </where>
+  </select>
+  
+  
+  <!--接收列表 -->
+  <select id="receiveList"  resultType="com.vo.TBudgetAllocationsVo">
+  		SELECT a.plan_id planId,e.type type,a.budget_year budgetYear,a.effective_month effectiveMonth,
+  			   o.org_name orgName,s.sub_name subName,a.budget_amount budgetAmount,a.budget_month budgetMonth,
+  			   a.budget_category budgetCategory,a.type budgetType
+  	    FROM t_budget_allocations a LEFT JOIN t_org_info o ON a.org_id=o.id 
+  	    	   LEFT JOIN t_subject s ON a.subject_id = s.id
+  	    	   left join t_execution_plan e on a.plan_id=e.id
+  	   	<where>
+  	   		o.id=#{currOrgId}
+  	   		<if test="budgetYear !=0">
+  	   			and a.budget_year = #{budgetYear}
+  	   		</if>
+  	   		<if test="subjectId !=0">
+  	   			and a.subject_id = #{subjectId}
+  	   		</if>
+  	   	</where> 
+  	   	LIMIT #{offset},#{limit}
+  </select>
+  <!-- 接收总记录数 -->
+  <select id="countReceive" resultType="int">
+  		SELECT count(*)
+  	    FROM t_budget_allocations a LEFT JOIN t_org_info o ON a.org_id=o.id 
+  	    	   LEFT JOIN t_subject s ON a.subject_id = s.id
+  	   	<where>
+  	   		o.id=#{currOrgId}
+  	   		<if test="budgetYear !=0">
+  	   			and a.budget_year = #{budgetYear}
+  	   		</if>
+  	   		<if test="subjectId !=0">
+  	   			and a.subject_id = #{subjectId}
+  	   		</if>
+  	   	</where> 
+  </select>
+  
+  <!-- 统计预算管理使用列表 -->
+  <select id="useList" resultType="com.vo.TBudgetAllocationsVo">
+  		SELECT a.plan_id planId,a.org_id orgId,a.subject_id subjectId,
+          a.budget_year budgetYear,a.effective_month effectiveMonth,
+  			o.org_name orgName,s.sub_name subName,a.budget_amount budgetAmount,
+  			a.budget_month budgetMonth,a.budget_category budgetCategory,a.type budgetType
+  		FROM t_budget_allocations a LEFT JOIN t_org_info o ON a.org_id=o.id
+  			LEFT JOIN t_subject s ON a.subject_id=s.id
+  		<where>
+  	   		a.org_id IN 
+  	   		(
+  	   			<foreach collection="leafList" separator="," item="i">
+  	   				#{i.id}
+  	   			</foreach>
+  	   		)
+  	   		<if test="budgetYear !=0 and budgetYear !=null">
+  	   			and a.budget_year = #{budgetYear}
+  	   		</if>
+  	   		<if test="orgId !=0 and orgId !=null">
+  	   			and a.org_id = #{orgId}
+  	   		</if>
+  	   		<if test="searchKey !=null and searchKey !=''">
+		  		and	s.sub_name like "%"#{searchKey}"%"
+  			</if>
+  	   		<if test="subjectId !=0 ">
+		  		and	a.subject_id =#{subjectId}
+  			</if>
+  			<if test="budgetCategory !=0">
+  	   			and a.budget_category=#{budgetCategory}
+  	   		</if>
+  	   	</where> 
+  	   	LIMIT #{offset},#{limit}	
+  </select>
+  
+   <!-- 预算管理使用列表总记录数 -->
+  <select id="countUse" resultType="int">
+  		SELECT count(*)
+  		FROM t_budget_allocations a LEFT JOIN t_org_info o ON a.org_id=o.id 
+  			LEFT JOIN t_subject s ON a.subject_id=s.id
+  		<where>
+  	   		a.org_id IN 
+  	   		(
+  	   			<foreach collection="leafList" separator="," item="i">
+  	   				#{i.id}
+  	   			</foreach>
+  	   		)
+  	   		<if test="budgetYear !=0 and budgetYear !=null">
+  	   			and a.budget_year = #{budgetYear}
+  	   		</if>
+  	   		<if test="orgId !=0 and orgId !=null">
+  	   			and a.org_id = #{orgId}
+  	   		</if>
+  	   		<if test="searchKey !=null and searchKey !=''">
+		  		and	sub_name like "%"#{searchKey}"%"
+  			</if>
+  			<if test="subjectId !=0 ">
+		  		and	a.subject_id =#{subjectId}
+  			</if>
+  			<if test="budgetCategory !=0">
+  	   			and a.budget_category=#{budgetCategory}
+  	   		</if>
+  	   	</where> 
+  </select>
+  
+  <!-- 统计某年的已用预算额 -->
+  <select id="actualUseByYear" resultType="java.lang.Double">
+  		SELECT SUM(money) 
+  			FROM t_order 
+  		WHERE `status` NOT IN(2,5,10) 
+          <if test="subjectId != null">
+              AND sub_id=#{subjectId}
+          </if>
+        AND org_id=#{orgId}
+        and parent_id=0
+  		AND DATE_FORMAT(create_time,'%Y')=#{budgetYear};
+  </select>
+  
+  <!-- 按年统计科目已用预算额(无执行计划) -->
+  <select id="budgetPublicByYear" resultType="com.vo.BudgetDetailVo">
+  		SELECT s.sub_name subName,od.subjects subjectId,SUM(od.price*od.total_num) actualUse
+  			FROM t_order o INNER JOIN t_order_detail od ON o.id=od.order_id 
+					LEFT JOIN t_subject s ON od.subjects=s.id
+  		WHERE o.`status` NOT IN(2,5,10) 
+  			AND  DATE_FORMAT(od.create_time,'%Y')=#{year}
+  		 AND od.create_time &lt; #{date} AND od.org_id=#{orgId}
+			GROUP BY od.subjects
+  </select>
+  
+  <!-- 查看某科目截止今天累计使用额 -->
+  <select id="budgetAccumulative" resultType="java.lang.Double">
+  		SELECT SUM(od.price*od.total_num) actualUse
+  			FROM t_order o INNER JOIN t_order_detail od ON o.id=od.order_id 
+  		WHERE o.`status` NOT IN(2,5,10) 
+  			AND  DATE_FORMAT(od.create_time,'%Y')=#{year}
+  		 AND od.create_time &lt; #{date} AND od.org_id=#{orgId}
+			AND od.subjects=#{subjectId}
+  </select>
+
+
+
+
+  <!-- 根据部门，年份，科目查出预算 -->
+  <select id="findAllocation" resultType="com.vo.TBudgetAllocationsVo">
+		SELECT a.plan_id planId,a.budget_amount budgetAmount,s.sub_name subName FROM t_budget_allocations a 
+			LEFT JOIN t_subject s ON a.subject_id=s.id
+		WHERE org_id=#{orgId} and  budget_year=#{year} AND subject_id=#{subjectId} and type=0
+  </select>
+  <!-- 根据部门，年份查出预算 -->
+  <select id="findAllocation2" resultType="com.entities.TBudgetAllocations">
+		SELECT a.budget_amount budgetAmount FROM t_budget_allocations a 
+			
+		WHERE org_id=#{orgId} and  budget_year=#{year}  and type=0 and budget_category=1
+  </select>
+  
+  <!-- 已用预算明细 -->
+   <select id="budgetDetailUseList" resultType="com.vo.OrderVo">
+  		SELECT g.goods_num code,g.goods_name name,u.`name` buyMan,od.create_time buyDate,
+  			od.total_num buyNum,od.price price
+  			FROM t_order o INNER JOIN t_order_detail od ON o.id=od.order_id 
+				LEFT JOIN goods g ON od.goods_id=g.goods_id
+				LEFT JOIN t_user_info u ON o.create_by=u.id
+		<where>
+				o.`status` NOT IN(2,5,10) AND DATE_FORMAT(od.create_time,'%Y')=#{budgetYear}
+                <if test="subjectId != null and subjectId != 0">
+                    AND o.sub_id=#{subjectId}
+                </if>
+				<if test="userId !=0">
+					AND o.create_by=#{userId}
+				</if>
+				<if test="searchKey !=null and searchKey !=''">
+		  			and	(g.goods_name like "%"#{searchKey}"%" or g.goods_num=#{searchKey})
+  				</if>
+  				AND od.org_id=#{orgId}
+		</where>
+       <if test="offset != null and limit != null">
+           LIMIT #{offset},#{limit}
+       </if>
+  </select>
+
+  <!--查询预算明细里面的所有采购人员-->
+  <select id="findPrucUsers" resultType="java.util.Map">
+      SELECT  u.id , u.`name` FROM t_order o
+      INNER JOIN t_user_info u ON o.create_by=u.id
+      INNER JOIN t_order_detail od ON o.id=od.order_id
+      WHERE o.`status` NOT IN(2,5,10) AND DATE_FORMAT(od.create_time,'%Y')=#{budgetYear}
+      AND od.create_time &lt; now() AND od.org_id=#{orgId}
+      <if test="subjectId != null and subjectId != 0">
+          AND od.subjects=#{subjectId}
+      </if>
+      <if test="userId != null and userId != 0">
+          AND o.create_by=#{userId}
+      </if>
+      GROUP BY u.id
+  </select>
+
+
+  <!-- 已用预算明细总记录数 -->
+  <select id="countBudgetDetailUse" resultType="int">
+      SELECT
+          count(1)
+      FROM t_order o INNER JOIN t_order_detail od ON o.id=od.order_id
+      LEFT JOIN goods g ON od.goods_id=g.goods_id
+      LEFT JOIN t_user_info u ON o.create_by=u.id
+      <where>
+          o.`status` NOT IN(2,5,10) AND DATE_FORMAT(od.create_time,'%Y')=#{budgetYear}
+          <if test="subjectId != null and subjectId != 0">
+              AND od.subjects=#{subjectId}
+          </if>
+          AND od.org_id=#{orgId}
+          <if test="userId !=0">
+              AND o.create_by=#{userId}
+          </if>
+          <if test="searchKey !=null and searchKey !=''">
+              and	(g.goods_name like "%"#{searchKey}"%" or g.goods_num=#{searchKey})
+          </if>
+      </where>
+  </select>
+  
+  <!-- 查看每个月所用预算 -->
+  <select id="actualUseByMonth" resultType="java.lang.Double">
+  	SELECT SUM(od.price*od.total_num)
+  			FROM t_order o INNER JOIN t_order_detail od ON o.id=od.order_id 
+	WHERE o.`status` NOT IN(2,5,10) AND DATE_FORMAT(od.create_time,'%Y')=#{budgetYear}
+			AND DATE_FORMAT(od.create_time,'%c') &lt;=#{planMonth} AND od.org_id=#{orgId}
+			<if test="subjectId != null and subjectId != 0">
+                AND od.subjects=#{subjectId}
+            </if>
+  </select>
+  
+   <!-- 查看每个季度所用预算 -->
+  <select id="actualUseByQuarter" resultType="java.lang.Double">
+  	SELECT SUM(od.price*od.total_num)
+  			FROM t_order o INNER JOIN t_order_detail od ON o.id=od.order_id 
+	WHERE o.`status` NOT IN(2,5,10) AND DATE_FORMAT(od.create_time,'%Y')=#{budgetYear}
+			AND QUARTER(od.create_time) &lt;= #{planQuarter} AND od.org_id=#{orgId}
+      <if test="subjectId != null and subjectId != 0">
+			AND od.subjects=#{subjectId}
+      </if>
+  </select>
+  
+  
+  <!-- 查看下拉框科目 -->
+  <select id="findSubjectList" resultType="java.util.Map">
+  	SELECT s.id subjectId,s.sub_name subName FROM t_org_info o LEFT JOIN t_sub_ref_org sr ON o.id=sr.org_id
+LEFT JOIN t_subject s ON s.id=sr.sub_id WHERE o.id=#{currOrgId}
+  </select> 
+  
+  
+    <!-- 根据组织和科目下单时间查找下单前的累计预算 -->
+  <select id="budgetOrder" resultType="com.vo.BudgetDetailVo">
+  		SELECT s.sub_name subName,od.subjects subjectId,SUM(od.price*od.total_num) actualUse
+  			FROM t_order o INNER JOIN t_order_detail od ON o.id=od.order_id 
+					LEFT JOIN t_subject s ON od.subjects=s.id
+  		WHERE o.`status` NOT IN(2,5,10) 
+  			AND  DATE_FORMAT(o.create_time,'%Y')=DATE_FORMAT(#{orderDate},'%Y')
+  		 AND DATE_FORMAT(o.create_time,'%Y-%m-%d %H:%i:%s') &lt;= #{orderDate} AND od.org_id=#{orgId}
+      <if test="subjectId != null and subjectId != 0">
+			and od.subjects=#{subjectId}
+      </if>
+  </select>
+
+
+    <select id="getBudgetAllocation" resultType="com.vo.TBudgetAllocationsVo">
+        SELECT a.plan_id planId,a.budget_amount budgetAmount,s.sub_name subName,a.subject_id subjectId,a.type budgetType,a.org_id orgId,a.budget_month budgetMonth
+        a.budget_category budgetCategory
+        FROM t_budget_allocations a
+			LEFT JOIN t_subject s ON a.subject_id=s.id
+		<where>
+            org_id=#{orgId} and  budget_year=#{year}
+            <if test="subjectId != null and subjectId !='' or subjectId == 0">
+                AND subject_id=#{subjectId}
+            </if>
+        </where>
+    </select>
+
+
+
+
+    <!-- 查出当前部门年度情况 -->
+    <select id="findSubjetIdByOrgAndYear" resultType="com.entities.TBudgetAllocations">
+        SELECT ba.budget_amount budgetAmount,ba.plan_id planId
+        FROM t_budget_allocations ba
+        WHERE ba.org_id=#{orgId} AND ba.budget_year=#{year} AND ba.type=0
+    </select>
+
+    <!-- 查出当前部门月度情况 -->
+    <select id="findSubjetIdByOrgAndYearAndMonth" resultType="com.entities.TBudgetAllocations">
+        SELECT ba.budget_amount budgetAmount,ba.plan_id planId
+        FROM t_budget_allocations ba
+        WHERE ba.org_id=#{orgId} AND ba.budget_year=#{year} AND ba.type=0 AND ba.budget_month=#{month}
+    </select>
+
+    <!-- 查出当前部门是否按科目分配 -->
+    <select id="findSubjetCount" resultType="int">
+        SELECT count(*)
+        FROM t_budget_allocations ba
+        WHERE ba.org_id=#{orgId} AND ba.budget_year=#{year} AND ba.type=1
+    </select>
+
+    <!-- 查看某部门当前年度已使用额 -->
+    <select id="findUsedAmount" resultType="java.lang.Double">
+        SELECT SUM(od.price*od.total_num) actualUse
+        FROM t_order o INNER JOIN t_order_detail od ON o.id=od.order_id
+        WHERE o.`status` NOT IN(2,5,10)
+        AND  DATE_FORMAT(od.create_time,'%Y')=#{year}
+        AND od.create_time &lt; #{date} AND od.org_id=#{orgId}
+    </select>
+
+    <!-- 查看某部门当前月度已使用额 -->
+    <select id="findUsedAmountMonth" resultType="java.lang.Double">
+        SELECT SUM(od.price*od.total_num) actualUse
+        FROM t_order o INNER JOIN t_order_detail od ON o.id=od.order_id
+        WHERE o.`status` NOT IN(2,5,10)
+        AND  DATE_FORMAT(od.create_time,'%Y')=#{year}
+        AND DATE_FORMAT(od.create_time,'%m') = #{month} AND od.org_id=#{orgId}
+    </select>
+
+
+    <!-- 查看某部门当前月度当前科目已使用额 -->
+    <select id="findUsedAmountMonthSub" resultType="java.lang.Double">
+        SELECT SUM(od.price*od.total_num) actualUse
+        FROM t_order o INNER JOIN t_order_detail od ON o.id=od.order_id
+        WHERE o.`status` NOT IN(2,5,10)
+        AND  DATE_FORMAT(od.create_time,'%Y')=#{year}
+        AND DATE_FORMAT(od.create_time,'%m') = #{month}
+        AND od.org_id=#{orgId}
+        and od.subjects=#{subjectId}
+    </select>
+
+    <!-- 查看当前科目是否有执行计划 -->
+    <select id="findPlan" resultType="com.entities.TBudgetAllocations">
+        SELECT ba.budget_amount budgetAmount,ba.plan_id planId
+        FROM t_budget_allocations ba
+        WHERE ba.org_id=#{orgId} AND ba.budget_year=#{year} AND ba.type=#{type} AND ba.subject_id=#{subjectId}
+    </select>
+
+
+    <!-- 查看当前科目月度预算额 -->
+    <select id="findSubMonthAmount" resultType="double">
+        SELECT ba.budget_amount budgetAmount
+        FROM t_budget_allocations ba
+        WHERE ba.org_id=#{orgId}
+        AND ba.budget_year=#{year}
+        AND ba.type=1
+        AND ba.budget_month=#{month}
+        AND ba.subject_id=#{subjectId}
+
+    </select>
+
+    <!-- 插入月度预算-->
+    <insert id="insertBudgetMonth" parameterType="com.entities.TBudgetAllocations">
+        insert into t_budget_allocations (org_id,subject_id,budget_year, budget_month,
+        budget_amount,create_date,type,budget_category,p_id
+        )
+        values
+        <foreach collection="list" separator="," item="i">
+            (#{i.orgId,jdbcType=INTEGER},#{i.subjectId,jdbcType=INTEGER},
+            #{i.budgetYear,jdbcType=INTEGER}, #{i.budgetMonth,jdbcType=INTEGER},
+            #{i.budgetAmount,jdbcType=DOUBLE},#{i.createDate,jdbcType=TIMESTAMP},#{i.budgetType,jdbcType=INTEGER},
+            #{i.budgetCategory,jdbcType=INTEGER},#{i.pId,jdbcType=INTEGER}
+            )
+        </foreach>
+    </insert>
+
+    <select id="findBudgetAmount" resultType="double">
+        SELECT ba.budget_amount budgetAmount
+        FROM t_budget_allocations ba
+        WHERE ba.org_id=#{orgId} AND ba.budget_year=#{year}
+        AND ba.type=0 AND ba.budget_month=#{month} AND ba.budget_catecory=2
+    </select>
+
+    <select id="findSubjetMonthCount" resultType="int">
+        SELECT count(*)
+        FROM t_budget_allocations ba
+        WHERE ba.org_id=#{orgId} AND ba.budget_year=#{year} AND ba.type=1 AND ba.budget_month=#{month}
+    </select>
+</mapper>

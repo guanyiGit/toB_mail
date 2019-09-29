@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.AttrGroupDao">
+
+	<select id="get" resultType="com.entities.AttrGroupDO">
+		select `group_id`,`group_name`,`status`,`cid`,`create_time`,`update_time` from attr_group where group_id = #{value}
+	</select>
+
+	<select id="list" resultType="com.vo.attrGroupVO">
+		SELECT ag.group_id groupId,ag.group_name groupName,ag.status, ag.cid,ag.create_time createTime,ag.update_time updateTime,gc.c_name cName
+		FROM attr_group ag
+		LEFT JOIN goods_category gc
+		ON ag.cid=gc.cid
+        <where>  
+		  		  <if test="string != null and string != ''"> and gc.c_name like "%"#{string}"%" </if>
+		  		  <if test="status != null and status != ''and status != 0 "> and ag.status = #{status} </if>
+		</where>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		SELECT
+		  count(*)
+		FROM attr_group ag
+		LEFT JOIN goods_category gc
+		ON ag.cid=gc.cid
+		 <where>
+			 <if test="string != null and string != ''"> and gc.c_name like "%"#{string}"%" </if>
+			 <if test="status != null and status != ''and status != 0 "> and ag.status = #{status} </if>
+		 </where>
+	</select>
+	 
+	<insert id="save" parameterType="com.entities.AttrGroupDO" useGeneratedKeys="true" keyProperty="groupId">
+		insert into attr_group
+		(
+			`group_name`, 
+			`status`, 
+			`cid`, 
+			`create_time`, 
+			`update_time`
+		)
+		values
+		(
+			#{groupName}, 
+			#{status}, 
+			#{cid}, 
+			#{createTime}, 
+			#{updateTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.entities.AttrGroupDO">
+		update attr_group 
+		<set>
+			<if test="groupName != null">`group_name` = #{groupName}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="cid != null">`cid` = #{cid}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where group_id = #{groupId}
+	</update>
+	
+	<delete id="remove">
+		delete from attr_group where group_id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from attr_group where group_id in 
+		<foreach item="groupId" collection="array" open="(" separator="," close=")">
+			#{groupId}
+		</foreach>
+	</delete>
+
+
+	<select id="findAttrGroupByCate" resultType="map" parameterType="int">
+		SELECT ag.group_id id, ag.group_name `name` FROM attr_group  ag WHERE ag.cid=#{cId} AND ag.status=1
+	</select>
+</mapper>

@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.TSubjectMapper" >
+  <resultMap id="BaseResultMap" type="com.entities.TSubject" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="sub_define_id" property="subDefineId" jdbcType="INTEGER" />
+    <result column="sub_name" property="subName" jdbcType="VARCHAR" />
+    <result column="sub_code" property="subCode" jdbcType="VARCHAR" />
+    <result column="p_id" property="pId" jdbcType="INTEGER" />
+    <result column="sub_level" property="subLevel" jdbcType="INTEGER" />
+    <result column="create_by" property="createBy" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, sub_define_id, sub_name, sub_code, p_id, sub_level, create_by, create_date,`type`
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.entities.TSubjectExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_subject
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_subject
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_subject
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.entities.TSubjectExample" >
+    delete from t_subject
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.entities.TSubject" >
+    insert into t_subject (id, sub_define_id, sub_name,
+      sub_code, p_id, sub_level, 
+      create_by, create_date,`type`)
+    values (#{id,jdbcType=INTEGER}, #{subDefineId,jdbcType=INTEGER}, #{subName,jdbcType=VARCHAR},
+      #{subCode,jdbcType=VARCHAR}, #{pId,jdbcType=INTEGER}, #{subLevel,jdbcType=INTEGER}, 
+      #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP},#{type,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.entities.TSubject" useGeneratedKeys="true" keyProperty="id">
+    insert into t_subject
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="subDefineId != null" >
+        sub_define_id,
+      </if>
+      <if test="subName != null" >
+        sub_name,
+      </if>
+      <if test="subCode != null" >
+        sub_code,
+      </if>
+      <if test="pId != null" >
+        p_id,
+      </if>
+      <if test="subLevel != null" >
+        sub_level,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      `type`
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="subDefineId != null" >
+        #{subDefineId,jdbcType=INTEGER},
+      </if>
+      <if test="subName != null" >
+        #{subName,jdbcType=VARCHAR},
+      </if>
+      <if test="subCode != null" >
+        #{subCode,jdbcType=VARCHAR},
+      </if>
+      <if test="pId != null" >
+        #{pId,jdbcType=INTEGER},
+      </if>
+      <if test="subLevel != null" >
+        #{subLevel,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="type != null and type != '' or type == 0" >
+        #{type,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.entities.TSubjectExample" resultType="java.lang.Integer" >
+    select count(*) from t_subject
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update t_subject
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.budSubId != null" >
+        bud_sub_id = #{record.budSubId,jdbcType=INTEGER},
+      </if>
+      <if test="record.subName != null" >
+        sub_name = #{record.subName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.subCode != null" >
+        sub_code = #{record.subCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pId != null" >
+        p_id = #{record.pId,jdbcType=INTEGER},
+      </if>
+      <if test="record.subLevel != null" >
+        sub_level = #{record.subLevel,jdbcType=INTEGER},
+      </if>
+      <if test="record.createBy != null" >
+        create_by = #{record.createBy,jdbcType=INTEGER},
+      </if>
+      <if test="record.createDate != null" >
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update t_subject
+    set id = #{record.id,jdbcType=INTEGER},
+      bud_sub_id = #{record.budSubId,jdbcType=INTEGER},
+      sub_name = #{record.subName,jdbcType=VARCHAR},
+      sub_code = #{record.subCode,jdbcType=VARCHAR},
+      p_id = #{record.pId,jdbcType=INTEGER},
+      sub_level = #{record.subLevel,jdbcType=INTEGER},
+      create_by = #{record.createBy,jdbcType=INTEGER},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.entities.TSubject" >
+    update t_subject
+    <set >
+      <if test="subDefineId != null" >
+        sub_define_id = #{subDefineId,jdbcType=INTEGER},
+      </if>
+      <if test="subName != null" >
+        sub_name = #{subName,jdbcType=VARCHAR},
+      </if>
+      <if test="subCode != null" >
+        sub_code = #{subCode,jdbcType=VARCHAR},
+      </if>
+      <if test="pId != null" >
+        p_id = #{pId,jdbcType=INTEGER},
+      </if>
+      <if test="subLevel != null" >
+        sub_level = #{subLevel,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.entities.TSubject" >
+    update t_subject
+    set sub_define_id = #{subDefineId,jdbcType=INTEGER},
+      sub_name = #{subName,jdbcType=VARCHAR},
+      sub_code = #{subCode,jdbcType=VARCHAR},
+      p_id = #{pId,jdbcType=INTEGER},
+      sub_level = #{subLevel,jdbcType=INTEGER},
+      create_by = #{createBy,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <!-- 更改组织表预算定义科目信息 -->
+  <update id="updateOrg" parameterType="int">
+  	UPDATE t_org_info SET bud_sub_id=#{budSubId}
+  </update>
+  
+  <!-- 科目页面信息 -->
+  <select id="list" resultType="com.entities.TSubject">
+  		<!--SELECT * FROM t_subject -->
+  			<!--<if test="searchKey !=null and searchKey !=''">-->
+		  		<!--<where>-->
+		  			<!--sub_name like "%"#{searchKey}"%" or sub_code=#{searchKey}-->
+		  		<!--</where>-->
+  			<!--</if>-->
+  		<!--LIMIT #{offset},#{limit}-->
+        select s.* from t_subject s,t_sub_ref_org  so
+        <where>
+          and s.id  = so.sub_id
+          <if test="orgId != null and orgId != '' or ordId == 0 ">
+            and so.org_id = #{orgId}
+          </if>
+          <if  test="searchKey !=null and searchKey !=''">
+            and sub_name like "%"#{searchKey}"%" or sub_code=#{searchKey}
+          </if>
+        </where>
+        LIMIT #{offset},#{limit}
+  </select>
+
+  <!-- 科目总记录数 -->
+  <select id="count" resultType="int">
+    select count(*) from t_subject s,t_sub_ref_org  so
+    <where>
+      and s.id  = so.sub_id
+      <if test="orgId != null and orgId != '' or orgId == 0">
+        and so.org_id = #{orgId}
+      </if>
+      <if  test="searchKey !=null and searchKey !=''">
+        and sub_name like "%"#{searchKey}"%" or sub_code=#{searchKey}
+      </if>
+    </where>
+  </select>
+
+
+  <select id="subListByOrgId"  resultType="com.entities.TSubject">
+    select  s.*
+    from t_subject s
+    LEFT JOIN t_sub_define sd on s.sub_define_id = sd.id
+    LEFT JOIN t_org_ref_subdefine os on os.sub_define_id = sd.id
+    <where>
+      <if test="orgId != null and orgId != '' or orgId == 0">
+        and os.org_id = #{orgId}
+      </if>
+    </where>
+  </select>
+
+  <delete id="deleteById" parameterType="java.lang.Integer" >
+    delete from t_subject where id = #{subId}
+  </delete>
+
+  <delete id="deleteBySubDefineId" parameterType="java.lang.Integer">
+    delete from t_subject  where sub_define_id = #{subDefineId}
+  </delete>
+
+
+  <select id="getSubs" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from t_subject t
+    <where>
+      <if test="subDefineId !=null and subDefineId != ''">
+          and t.sub_define_id = #{subDefineId}
+      </if>
+    </where>
+  </select>
+
+
+  <select id="getSubsByOrgIdAndYear" resultMap="BaseResultMap">
+    select t.*
+    from t_subject t
+    left join t_sub_define ts on t.sub_define_id = ts.id
+    left join t_org_ref_subdefine os on  ts.id = os.sub_define_id
+    <where>
+      <if test="orgId != null and orgId != '' or orgId == 0">
+        and os.org_id = #{orgId}
+      </if>
+      <if test="year != null and year != ''" >
+        and  ts.year = #{year}
+      </if>
+
+    </where>
+  </select>
+
+</mapper>

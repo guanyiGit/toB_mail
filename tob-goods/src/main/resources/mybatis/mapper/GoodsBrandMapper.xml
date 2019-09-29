@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.GoodsBrandDao">
+
+	<select id="get" resultType="com.entities.GoodsBrandDO">
+		select `brand_id`,`brand_en_name`,`brand_ch_name`,`description`,`brand_status`,`create_time`,`update_time` from goods_brand where brand_id = #{value}
+	</select>
+
+	<select id="list" resultType="com.entities.GoodsBrandDO">
+		select `brand_id` brandId,`brand_en_name` brandEnName,`brand_ch_name` brandChName,`description`,`brand_status` brandStatus,
+		`create_time` createTime,`update_time` updateTime from goods_brand
+        <where>  
+		  		  <if test="string != null and string != ''"> and brand_ch_name like "%"#{string}"%" </if>
+		  		  <if test="brandStatus != null and brandStatus != ''and brandStatus != 0"> and brand_status = #{brandStatus} </if>
+		</where>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from goods_brand
+		 <where>
+			 <if test="string != null and string != ''"> and brand_ch_name like "%"#{string}"%" </if>
+			 <if test="brandStatus != null and brandStatus != ''and brandStatus != 0"> and brand_status = #{brandStatus} </if>
+		 </where>
+	</select>
+	 
+	<insert id="save" parameterType="com.entities.GoodsBrandDO" useGeneratedKeys="true" keyProperty="brandId">
+		insert into goods_brand
+		(
+			`brand_en_name`, 
+			`brand_ch_name`, 
+			`description`, 
+			`brand_status`, 
+			`create_time`, 
+			`update_time`
+		)
+		values
+		(
+			#{brandEnName}, 
+			#{brandChName}, 
+			#{description}, 
+			#{brandStatus}, 
+			#{createTime}, 
+			#{updateTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.entities.GoodsBrandDO">
+		update goods_brand 
+		<set>
+			<if test="brandEnName != null">`brand_en_name` = #{brandEnName}, </if>
+			<if test="brandChName != null">`brand_ch_name` = #{brandChName}, </if>
+			<if test="description != null">`description` = #{description}, </if>
+			<if test="brandStatus != null">`brand_status` = #{brandStatus}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where brand_id = #{brandId}
+	</update>
+	
+	<delete id="remove">
+		delete from goods_brand where brand_id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from goods_brand where brand_id in 
+		<foreach item="brandId" collection="array" open="(" separator="," close=")">
+			#{brandId}
+		</foreach>
+	</delete>
+
+</mapper>

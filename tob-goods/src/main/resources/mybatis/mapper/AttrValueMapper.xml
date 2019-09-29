@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.AttrValueDao">
+
+	<select id="get" resultType="com.entities.AttrValueDO">
+		select `av_id`,`attr_id`,`attr_value`,`status`,`create_time`,`update_time` from attr_value where av_id = #{value}
+	</select>
+
+	<select id="list" resultType="com.entities.AttrValueDO">
+		select `av_id`,`attr_id`,`attr_value`,`status`,`create_time`,`update_time` from attr_value
+        <where>  
+		  		  <if test="avId != null and avId != ''"> and av_id = #{avId} </if>
+		  		  <if test="attrId != null and attrId != ''"> and attr_id = #{attrId} </if>
+		  		  <if test="attrValue != null and attrValue != ''"> and attr_value = #{attrValue} </if>
+		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
+		  		  <if test="updateTime != null and updateTime != ''"> and update_time = #{updateTime} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by av_id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from attr_value
+		 <where>  
+		  		  <if test="avId != null and avId != ''"> and av_id = #{avId} </if>
+		  		  <if test="attrId != null and attrId != ''"> and attr_id = #{attrId} </if>
+		  		  <if test="attrValue != null and attrValue != ''"> and attr_value = #{attrValue} </if>
+		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
+		  		  <if test="updateTime != null and updateTime != ''"> and update_time = #{updateTime} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.entities.AttrValueDO" useGeneratedKeys="true" keyProperty="avId">
+		insert into attr_value
+		(
+			`attr_id`, 
+			`attr_value`, 
+			`status`, 
+			`create_time`, 
+			`update_time`
+		)
+		values
+		(
+			#{attrId}, 
+			#{attrValue}, 
+			#{status}, 
+			#{createTime}, 
+			#{updateTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.entities.AttrValueDO">
+		update attr_value 
+		<set>
+			<if test="attrId != null">`attr_id` = #{attrId}, </if>
+			<if test="attrValue != null">`attr_value` = #{attrValue}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where av_id = #{avId}
+	</update>
+	
+	<delete id="remove">
+		delete from attr_value where av_id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from attr_value where av_id in 
+		<foreach item="avId" collection="array" open="(" separator="," close=")">
+			#{avId}
+		</foreach>
+	</delete>
+
+</mapper>

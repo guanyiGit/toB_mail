@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.CardDao">
+
+    <select id="get" resultType="com.entities.CardDO">
+		select `crad_id`,`goods_id`,`sku_id`,`count`,`price`,`add_time`,`remark`,`user_id` from t_card where crad_id = #{value}
+	</select>
+
+    <select id="list" resultType="com.entities.CardDO">
+        select `crad_id`,`goods_id`,`sku_id`,`count`,`price`,`add_time`,`remark`,`user_id` from t_card
+        <where>
+            <if test="cradId != null and cradId != ''">and crad_id = #{cradId}</if>
+            <if test="goodsId != null and goodsId != ''">and goods_id = #{goodsId}</if>
+            <if test="skuId != null and skuId != ''">and sku_id = #{skuId}</if>
+            <if test="count != null and count != ''">and count = #{count}</if>
+            <if test="price != null and price != ''">and price = #{price}</if>
+            <if test="addTime != null and addTime != ''">and add_time = #{addTime}</if>
+            <if test="remark != null and remark != ''">and remark = #{remark}</if>
+            <if test="userId != null and userId != ''">and user_id = #{userId}</if>
+        </where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+            <otherwise>
+                order by crad_id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) from t_card
+        <where>
+            <if test="cradId != null and cradId != ''">and crad_id = #{cradId}</if>
+            <if test="goodsId != null and goodsId != ''">and goods_id = #{goodsId}</if>
+            <if test="skuId != null and skuId != ''">and sku_id = #{skuId}</if>
+            <if test="count != null and count != ''">and count = #{count}</if>
+            <if test="price != null and price != ''">and price = #{price}</if>
+            <if test="addTime != null and addTime != ''">and add_time = #{addTime}</if>
+            <if test="remark != null and remark != ''">and remark = #{remark}</if>
+            <if test="userId != null and userId != ''">and user_id = #{userId}</if>
+        </where>
+    </select>
+
+
+    <insert id="save" parameterType="com.entities.CardDO" useGeneratedKeys="true" keyProperty="cradId">
+		insert into t_card
+		(
+			`goods_id`, 
+			`sku_id`, 
+			`count`, 
+			`price`, 
+			`add_time`, 
+			`remark`, 
+			`user_id`,
+			`sup_id`
+		)
+		values
+		(
+			#{goodsId}, 
+			#{skuId}, 
+			#{count}, 
+			#{price}, 
+			#{addTime}, 
+			#{remark}, 
+			#{userId},
+			#{supId}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.entities.CardDO">
+        update t_card
+        <set>
+            <if test="goodsId != null">`goods_id` = #{goodsId},</if>
+            <if test="skuId != null">`sku_id` = #{skuId},</if>
+            <if test="count != null">`count` = #{count},</if>
+            <if test="price != null">`price` = #{price},</if>
+            <if test="addTime != null">`add_time` = #{addTime},</if>
+            <if test="remark != null">`remark` = #{remark},</if>
+            <if test="userId != null">`user_id` = #{userId}</if>
+        </set>
+        where crad_id = #{cradId}
+    </update>
+
+    <delete id="remove">
+		delete from t_card where crad_id = #{value}
+	</delete>
+
+    <delete id="batchRemove">
+        delete from t_card where crad_id in
+        <foreach item="cradId" collection="array" open="(" separator="," close=")">
+            #{cradId}
+        </foreach>
+    </delete>
+
+    <resultMap id="MycardResultMap" type="com.pojo.Mycard" >
+        <association property="cardDO" javaType="com.entities.CardDO"></association>
+        <association property="userInfo" javaType="com.entities.UserInfo"></association>
+        <association property="supplierDO" javaType="com.entities.SupplierDO"></association>
+        <collection property="goodsInfos" ofType="com.pojo.GoodsInfo">
+            <association property="goodsDO" javaType="com.entities.GoodsDO"></association>
+            <collection property="skuDOList" ofType="com.pojo.SkuInfo">
+                <collection property="orderDetailDOs" ofType="com.entities.OrderDetailDO"></collection>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <resultMap id="CardRecordResultMap" type="com.pojo.CardRecordVO">
+        <association property="supplierDO" javaType="com.entities.SupplierDO"></association>
+        <collection property="cardDOList" ofType="com.pojo.CardVO">
+            <result property="picUrl" column="url" javaType="String" jdbcType="VARCHAR"/>
+            <result property="thumbnailUrl" column="thumbnail_url" javaType="String" jdbcType="VARCHAR"/>
+            <association property="cardDO" javaType="com.entities.CardDO"></association>
+        </collection>
+    </resultMap>
+
+    <!--查列表-->
+    <select id="findListByUserId" resultMap="MycardResultMap">
+        SELECT
+            car.*,d.*,sk.*,ui.*,su.*
+        FROM (
+            SELECT * FROM t_card
+            WHERE user_id = #{userId}
+            LIMIT #{reqPage.offset},#{reqPage.limit}
+        ) car
+        LEFT JOIN goods d ON d.goods_id = car.goods_id
+        LEFT JOIN sku sk ON sk.goods_id = car.goods_id
+        LEFT JOIN t_user_info ui ON ui.id = car.user_id
+        LEFT JOIN supplier su ON su.sup_id = d.sup_id
+        GROUP BY car.crad_id
+        ORDER BY car.add_time ASC
+    </select>
+
+    <!--查列表条数-->
+    <select id="findListByUserIdCount" resultType="java.lang.Integer">
+        SELECT count(1) FROM t_card
+        WHERE user_id = #{userId}
+    </select>
+
+    <!--查询购物车列表-->
+    <select id="findCardRecordList" parameterType="map" resultMap="CardRecordResultMap">
+        SELECT
+            info.url,info.thumbnail_url ,
+            su.*,card.*
+        FROM
+            `t_card` card
+        left join supplier su on su.sup_id = card.sup_id
+        left join t_media_ref ref on ref.ref_id = card.goods_id and ref.type = 1
+        left join t_media_info info on info.id = ref.media_id
+        <where>
+            remark = 0
+            <if test="ids != null and ids.length > 0">
+                and card.crad_id IN
+                <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="userId != null and userId != ''">
+              and card.user_id = #{userId}
+            </if>
+        </where>
+        GROUP BY card.crad_id
+    </select>
+
+    <select id="getAttrValue" parameterType="map" resultType="java.lang.String">
+		select goods.goods_name attr_value from goods
+		where goods.goods_id = #{goodsId}
+
+		union
+		select av.attr_value from sku_value_ref svr
+		left join attr_value av on av.av_id = svr.av_id
+		where svr.sku_id = #{skuId}
+
+		union
+		select av.attr_value from goods_value_ref gvr
+		left join attr_value av on av.av_id = gvr.av_id
+		where gvr.goods_id = #{goodsId}
+	</select>
+
+    <!--计算我的购物车数量-->
+    <select id="account" resultType="int">
+        SELECT COUNT(1) from t_card c WHERE c.user_id =#{userId} AND c.remark = 0
+    </select>
+
+    <insert id="saveOrder" parameterType="com.entities.OrderDO" useGeneratedKeys="true" keyProperty="id">
+		insert into t_order
+		(
+			`id`,
+			`order_no`,
+			`create_by`,
+			`org_id`,
+			`status`,
+			`money`,
+			`approval_opinion`,
+			`audit_opinion`,
+			`parent_id`,
+			`create_time`,
+			`update_time`,
+			`supplier_id`,
+			`isUseful`,
+			`sub_id`
+		)
+		values
+		(
+			#{id},
+			#{orderNo},
+			#{createBy},
+			#{orgId},
+			#{status},
+			#{money},
+			#{approvalOpinion},
+			#{auditOpinion},
+			#{parentId},
+			#{createTime},
+			#{updateTime},
+			#{supplierId},
+			#{isuseful},
+			#{subId}
+		)
+	</insert>
+    
+    <select id="getSubIdByGoodsId" parameterType="map" resultType="java.lang.Integer">
+        select goods.sub_id from goods
+        where goods.goods_id = #{goodsId}
+    </select>
+
+    <insert id="batchInsertOrderDetail" parameterType="java.util.List"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into t_order_detail(order_id,order_no,org_id,goods_id,sku_id,subjects,total_num,receive_num,price,status,remark,create_time,update_time)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.orderId,jdbcType=BIGINT},
+            #{item.orderNo,jdbcType=VARCHAR},
+            #{item.orgId,jdbcType=BIGINT},
+            #{item.goodsId,jdbcType=BIGINT},
+            #{item.skuId,jdbcType=BIGINT},
+            #{item.subjects,jdbcType=BIGINT},
+            #{item.totalNum,jdbcType=BIGINT},
+            #{item.receiveNum,jdbcType=INTEGER},
+            #{item.price,jdbcType=DECIMAL},
+            #{item.status,jdbcType=TINYINT},
+            #{item.remark,jdbcType=VARCHAR},
+            #{item.createTime,jdbcType=DATE},
+            #{item.updateTime,jdbcType=DATE}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="insertOrderDetail" parameterType="com.entities.OrderDetailDO" useGeneratedKeys="true" keyProperty="id">
+         insert into t_order_detail(order_id,order_no,org_id,goods_id,sku_id,subjects,total_num,receive_num,price,status,remark,create_time,update_time)
+         values
+         (
+            #{orderId,jdbcType=BIGINT},
+            #{orderNo,jdbcType=VARCHAR},
+            #{orgId,jdbcType=BIGINT},
+            #{goodsId,jdbcType=BIGINT},
+            #{skuId,jdbcType=BIGINT},
+            #{subjects,jdbcType=BIGINT},
+            #{totalNum,jdbcType=BIGINT},
+            #{receiveNum,jdbcType=INTEGER},
+            #{price,jdbcType=DECIMAL},
+            #{status,jdbcType=TINYINT},
+            #{remark,jdbcType=VARCHAR},
+            #{createTime,jdbcType=TIMESTAMP},
+            #{updateTime,jdbcType=TIMESTAMP}
+            )
+    </insert>
+
+    <insert id="batchInsertReceiptRecord" parameterType="java.util.List"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into t_receipt_record(og_id,recipient_id,status,num,receive_num,delivery_time,install_time,create_time,update_time)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.ogId,jdbcType=BIGINT},
+            #{item.recipientId,jdbcType=BIGINT},
+            #{item.status,jdbcType=INTEGER},
+            #{item.num,jdbcType=INTEGER},
+            #{item.receiveNum,jdbcType=INTEGER},
+            #{item.deliveryTime,jdbcType=TIMESTAMP},
+            #{item.installTime,jdbcType=TIMESTAMP},
+            #{item.createTime,jdbcType=TIMESTAMP},
+            #{item.updateTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+    <!--修改购物车商品数量-->
+    <update id="updOrderCount">
+        update t_card set `count`=`count`+#{count} where crad_id=#{id}
+    </update>
+    <!--根据用户id得到地址集合-->
+    <select id="getRecipient" resultType="map">
+        select id,create_by,org_id,name,phone,address,create_time,update_time
+          from t_recipient
+            where 1=1 and create_by=#{create_by}
+    </select>
+    <!--根据地址id得到地址对象-->
+    <select id="getRecipientById" resultType="map">
+        select id,create_by,org_id,name,phone,address,create_time,update_time
+          from t_recipient
+            where 1=1 and id=#{id}
+    </select>
+
+    <update id="updateRemarks">
+        update t_card set remark = 1 where crad_id in
+        <foreach item="cradId" collection="array" open="(" separator="," close=")">
+            #{cradId}
+        </foreach>
+    </update>
+
+    <update id="updateCount">
+        update t_card set count  = #{count} where crad_id = #{id}
+    </update>
+</mapper>

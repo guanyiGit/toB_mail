@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.GoodsCategoryDao">
+
+	<select id="get" resultType="com.entities.GoodsCategoryDO">
+		select `cid`,`c_name`,`has_leaf`,`lev`,`create_time`,`update_time`,`parent_cid`,`status` from goods_category where cid = #{value}
+	</select>
+
+	<select id="list" resultType="com.vo.goodsCategoryVO">
+		SELECT gc1.cid cid,gc1.c_name `cName`,gc1.has_leaf hasLeaf,gc1.lev,gc1.create_time createTime,gc1.update_time updateTime,
+		gc1.parent_cid parentCid,gc1.`status`,gc2.c_name pName
+		FROM
+		goods_category gc1
+		LEFT JOIN
+		goods_category gc2
+		ON gc1.parent_cid=gc2.cid
+        <where>
+		  		  <if test="string != null and string != ''"> and gc1.c_name like "%"#{string}"%" </if>
+		  		  <if test="status != null and status != ''and status != 0"> and gc1.status = #{status} </if>
+		</where>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		SELECT
+			count(*)
+		FROM
+		goods_category gc1
+		LEFT JOIN
+		goods_category gc2
+		ON gc1.parent_cid=gc2.cid
+		 <where>
+			 <if test="string != null and string != ''"> and gc1.c_name like "%"#{string}"%" </if>
+			 <if test="status != null and status != ''and status != 0"> and gc1.status = #{status} </if>
+		 </where>
+	</select>
+	 
+	<insert id="save" parameterType="com.entities.GoodsCategoryDO" useGeneratedKeys="true" keyProperty="cid">
+		insert into goods_category
+		(
+			`c_name`, 
+			`has_leaf`, 
+			`lev`, 
+			`create_time`, 
+			`update_time`, 
+			`parent_cid`, 
+			`status`
+		)
+		values
+		(
+			#{cName}, 
+			#{hasLeaf}, 
+			#{lev}, 
+			#{createTime}, 
+			#{updateTime}, 
+			#{parentCid}, 
+			#{status}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.entities.GoodsCategoryDO">
+		update goods_category 
+		<set>
+			<if test="cName != null">`c_name` = #{cName}, </if>
+			<if test="hasLeaf != null">`has_leaf` = #{hasLeaf}, </if>
+			<if test="lev != null">`lev` = #{lev}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="parentCid != null">`parent_cid` = #{parentCid}, </if>
+			<if test="status != null">`status` = #{status}</if>
+		</set>
+		where cid = #{cid}
+	</update>
+	
+	<delete id="remove">
+		delete from goods_category where cid = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from goods_category where cid in 
+		<foreach item="cid" collection="array" open="(" separator="," close=")">
+			#{cid}
+		</foreach>
+	</delete>
+
+	<select id="getlist" resultType="com.entities.GoodsCategoryDO">
+		select `cid`,`c_name`,`has_leaf`,`lev`,`create_time`,`update_time`,`parent_cid`,`status`
+		 from goods_category
+		 <where>
+			 <if test="parentCid != null"> AND `parent_cid` = #{parentCid}</if>
+		 </where>
+	</select>
+
+</mapper>

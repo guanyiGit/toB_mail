@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.GoodsDao">
+
+
+
+
+
+	<sql id="base">
+	SELECT goods.goods_num goodsNum,goods.goods_name goodsName,sup.sup_name supName,sub.sub_name subName,org.org_name orgName,
+	goods.create_time createTime,goods.listting_time listtingTime,goods.delisting_time delistingTime,goods.operator
+	FROM goods
+	LEFT JOIN supplier sup
+	ON goods.sup_id=sup.sup_id
+	LEFT JOIN t_subject sub
+	ON goods.sub_id=sub.id
+	LEFT JOIN t_org_info org
+	ON goods.org_id=org.id
+	</sql>
+
+
+	<select id="get" resultType="com.entities.GoodsDO">
+		select `goods_id`,`goods_name`,`status`,`org_id`,`cid`,`brand_id`,`listting_time`,`delisting_time`,`goods_num`,`remark`,`description`,`operator`,`origin`,`packing_list`,`weight`,`sup_id`,`sub_id`,`create_time`,`update_time` from goods where goods_id = #{value}
+	</select>
+
+	<select id="list" resultType="com.vo.goodsVO">
+		SELECT goods.goods_id goodsId,goods.goods_num goodsNum,goods.goods_name goodsName,sup.sup_name supName,sub.sub_name subName,org.org_name orgName,
+		goods.create_time createTime,goods.listting_time listtingTime,goods.delisting_time delistingTime,goods.operator
+		FROM goods
+		LEFT JOIN supplier sup
+		ON goods.sup_id=sup.sup_id
+		LEFT JOIN t_subject sub
+		ON goods.sub_id=sub.id
+		LEFT JOIN t_org_info org
+		ON goods.org_id=org.id
+        <where>
+			<if test="string !=null and string !=''">
+				AND  (goods.goods_name like "%"#{string}"%" OR goods.goods_num = #{string})
+			</if>
+			<if test="status != null and status != ''"> and goods.status = #{status} </if>
+			<if test="orgId != null and orgId != '' and orgId != 0"> and goods.org_id = #{orgId} </if>
+			<if test="subId != null and subId != '' and subId != 0"> and goods.sub_id = #{subId} </if>
+			<if test="supId != null and supId != '' and supId != 0"> and goods.sup_id = #{supId} </if>
+		</where>
+		LIMIT #{offset},#{limit};
+	</select>
+
+ 	<select id="count" resultType="int">
+		select count(*) from goods
+		 <where>
+			 <if test="string !=null and string !=''">
+				 AND  (goods.goods_name like "%"#{string}"%" OR goods.goods_num = #{string})
+			 </if>
+			 <if test="status != null and status != ''"> and goods.status = #{status}</if>
+			 <if test="orgId != null and orgId != '' and orgId != 0"> and goods.org_id = #{orgId} </if>
+			 <if test="supId != null and supId != '' and supId != 0"> and goods.sup_id = #{supId} </if>
+		 </where>
+	</select>
+
+	<insert id="save" parameterType="com.entities.GoodsDO" useGeneratedKeys="true" keyProperty="goodsId">
+		insert into goods
+		(
+			`goods_name`, 
+			`status`, 
+			`org_id`, 
+			`cid`, 
+			`brand_id`, 
+			`listting_time`, 
+			`delisting_time`, 
+			`goods_num`, 
+			`remark`, 
+			`description`, 
+			`operator`, 
+			`origin`, 
+			`packing_list`, 
+			`weight`, 
+			`sup_id`,
+			`sub_id`,
+			`create_time`, 
+			`update_time`
+		)
+		values
+		(
+			#{goodsName}, 
+			#{status}, 
+			#{orgId}, 
+			#{cid}, 
+			#{brandId}, 
+			#{listtingTime}, 
+			#{delistingTime}, 
+			#{goodsNum}, 
+			#{remark}, 
+			#{description}, 
+			#{operator}, 
+			#{origin}, 
+			#{packingList}, 
+			#{weight}, 
+			#{supId},
+			#{subId},
+			#{createTime}, 
+			#{updateTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.entities.GoodsDO">
+		update goods 
+		<set>
+			<if test="goodsName != null">`goods_name` = #{goodsName}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="orgId != null">`org_id` = #{orgId}, </if>
+			<if test="cid != null">`cid` = #{cid}, </if>
+			<if test="brandId != null">`brand_id` = #{brandId}, </if>
+			<if test="listtingTime != null">`listting_time` = #{listtingTime}, </if>
+			<if test="delistingTime != null">`delisting_time` = #{delistingTime}, </if>
+			<if test="goodsNum != null">`goods_num` = #{goodsNum}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="description != null">`description` = #{description}, </if>
+			<if test="operator != null">`operator` = #{operator}, </if>
+			<if test="origin != null">`origin` = #{origin}, </if>
+			<if test="packingList != null">`packing_list` = #{packingList}, </if>
+			<if test="weight != null">`weight` = #{weight}, </if>
+			<if test="supId != null">`sup_id` = #{supId}, </if>
+			<if test="subId != null">`sub_id` = #{subId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where goods_id = #{goodsId}
+	</update>
+	
+	<delete id="remove">
+		delete from goods where goods_id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from goods where goods_id in 
+		<foreach item="goodsId" collection="array" open="(" separator="," close=")">
+			#{goodsId}
+		</foreach>
+	</delete>
+
+
+	<select id="findSupplierByOrg" resultType="map" parameterType="int">
+		SELECT  sup.sup_id id,sup.sup_name `name`
+		FROM supplier sup
+		<where>
+			<if test="orgId != null and orgId !=0">sup.org_id = #{orgId}</if>
+		</where>
+
+	</select>
+
+	<select id="findSubjectByOrg" resultType="map" parameterType="int">
+		SELECT
+		sub.id,
+		sub.sub_name `name`
+		FROM
+		t_org_info org
+		LEFT JOIN t_sub_ref_org sro
+		ON org.id = sro.org_id
+		LEFT JOIN t_subject sub
+		ON sub.id = sro.sub_id
+		WHERE org.id =#{orgId}
+	</select>
+
+	<select id="findOrgByPid" resultType="map">
+		SELECT org.id, org.org_name `name` FROM t_org_info org WHERE org.pid=0
+	</select>
+
+
+	<select id="findGoodsDetail" resultType="com.vo.goodsDetailVO" parameterType="long">
+		select
+		goods.goods_name goodsName,goods.goods_num goodsNum, gb.brand_ch_name brandName,goods.origin,
+		goods.packing_list packingList,goods.weight,gc.c_name cName,sup.sup_name supName
+		from goods
+		left join goods_brand gb
+		on goods.brand_id=gb.brand_id
+		left join goods_category gc
+		on goods.cid=gc.cid
+		left join supplier sup
+		on goods.sup_id=sup.sup_id
+		WHERE goods.goods_id=#{goodsId}
+	</select>
+
+	<select id="findAttrDetail" resultType="com.vo.attrDetailVO" parameterType="long">
+		SELECT
+		av.attr_value attrValue, attr.attr_name attrName
+		FROM goods_value_ref gvr
+		LEFT JOIN attr_value av
+		ON gvr.av_id =av.av_id
+		LEFT JOIN attr
+		ON av.attr_id =attr.attr_id
+		WHERE gvr.goods_id=#{goodsId}
+	</select>
+
+	<select id="findSkuDetail" resultType="map" parameterType="long">
+		SELECT sku.`sku_id` skuId,attr.attr_name attrName, av.attr_value attrValue,sku.`price`,sku.`stock`
+		FROM sku
+		LEFT JOIN sku_value_ref svr
+		ON sku.sku_id =svr.sku_id
+		LEFT JOIN attr_value av
+		ON svr.av_id =av.av_id
+		LEFT JOIN attr
+		ON av.attr_id=attr.attr_id
+		WHERE sku.goods_id=#{goodsId}
+	</select>
+
+	<select id="findGoodsPic" resultType="map" parameterType="long">
+		SELECT
+		mi.url,mi.thumbnail_url thumbnailUrl
+		FROM  t_media_ref mr
+		LEFT JOIN t_media_info mi
+		ON mr.media_id=mi.id
+		WHERE mr.ref_id=#{goodsId} AND mr.type=1 AND mr.is_video=0
+	</select>
+
+</mapper>
