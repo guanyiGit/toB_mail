@@ -24,7 +24,7 @@
     "jquery": "^1.11.3",
     "js-cookie": "^2.2.0",
     "moment": "^2.22.2",
-    "swiper": "^4.4.1",
+    "swiper": "^6.5.1",
     "v-distpicker": "^1.0.20",
     "vue": "^2.5.2",
     "vue-piczoom": "^1.0.6",
