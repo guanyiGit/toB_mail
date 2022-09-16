@@ -16,7 +16,7 @@
     "@riophae/vue-treeselect": "0.0.37",
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
-    "bootstrap": "^3.3.7",
+    "bootstrap": "^3.4.1",
     "calender": "^1.0.3",
     "echarts": "^4.2.0-rc.1",
     "element-ui": "^2.4.8",
